@@ -6,7 +6,7 @@ use PhpAssumptions\Output\PrettyOutput;
 
 class Cli
 {
-    const VERSION = '0.1';
+    const VERSION = '0.1.0';
 
     /**
      * @param array $args

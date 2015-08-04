@@ -2,7 +2,7 @@
     "name": "rskuipers/php-assumptions",
     "description": "Static code analysis tool to detect assumptions",
     "require": {
-        "nikic/php-parser": "2.0.0alpha1"
+        "nikic/php-parser": "2.0.0alpha1@alpha"
     },
     "authors": [
         {
