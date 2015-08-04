@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-$autoloaders = [__DIR__ . '/../../autoload.php', __DIR__ . '/../vendor/autoload.php'];
+$autoloaders = [__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php'];
 
 foreach ($autoloaders as $autoloader) {
     if (is_file($autoloader)) {
