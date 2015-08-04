@@ -1,0 +1,19 @@
+{
+    "name": "rskuipers/php-assumptions",
+    "description": "Static code analysis tool to detect assumptions",
+    "require": {
+        "nikic/php-parser": "2.0.0alpha1"
+    },
+    "authors": [
+        {
+            "name": "Rick Kuipers",
+            "email": "io@rskuipers.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "PhpAssumptions\\": "src/PhpAssumptions"
+        }
+    },
+    "bin": ["bin/phpa"]
+}

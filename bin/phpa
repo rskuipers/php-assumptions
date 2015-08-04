@@ -1,0 +1,16 @@
+#!/usr/bin/env php
+<?php
+
+$autoloaders = [__DIR__ . '/../../autoload.php', __DIR__ . '/../vendor/autoload.php'];
+
+foreach ($autoloaders as $autoloader) {
+    if (is_file($autoloader)) {
+        require_once $autoloader;
+        break;
+    }
+}
+
+ini_set('xdebug.max_nesting_level', 3000);
+
+$cli = new \PhpAssumptions\Cli();
+$cli->handle($argv);
