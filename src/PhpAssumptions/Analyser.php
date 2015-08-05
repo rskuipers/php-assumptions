@@ -3,8 +3,9 @@
 namespace PhpAssumptions;
 
 use PhpAssumptions\Output\OutputInterface;
+use PhpParser\Lexer;
 use PhpParser\NodeTraverser;
-use PhpParser\ParserFactory;
+use PhpParser\Parser;
 
 class Analyser
 {
@@ -34,7 +35,7 @@ class Analyser
      */
     public function analyse(array $files)
     {
-        $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
+        $parser = new Parser(new Lexer());
 
         foreach ($files as $file) {
             $this->nodeVisitor->setCurrentFile($file);

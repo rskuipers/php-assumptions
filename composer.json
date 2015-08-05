@@ -1,8 +1,8 @@
 {
     "name": "rskuipers/php-assumptions",
-    "description": "Static code analysis tool to detect assumptions",
+    "description": "Static code analysis tool to detect weak assumptions",
     "require": {
-        "nikic/php-parser": "2.0.0alpha1@alpha"
+        "nikic/php-parser": "^1.0"
     },
     "authors": [
         {
