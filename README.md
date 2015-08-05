@@ -1,5 +1,10 @@
 # PHP Assumptions
 
+## Setup
+```sh
+$ composer require --dev rskuipers/php-assumptions=^0.1.0
+```
+
 ## Introduction
 This is a static code analysis tool doing some basic checks for weak assumptions.
 
