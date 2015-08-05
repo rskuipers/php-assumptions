@@ -1,6 +1,7 @@
 {
     "name": "rskuipers/php-assumptions",
     "description": "Static code analysis tool to detect weak assumptions",
+    "license": "MIT",
     "require": {
         "nikic/php-parser": "^1.0"
     },
