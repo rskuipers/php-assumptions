@@ -2,7 +2,7 @@
 
 ## Setup
 ```sh
-$ composer require --dev rskuipers/php-assumptions=^0.1.0
+$ composer require --dev rskuipers/php-assumptions
 ```
 
 ## Introduction
