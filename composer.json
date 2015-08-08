@@ -2,24 +2,24 @@
     "name": "rskuipers/php-assumptions",
     "description": "Static code analysis tool to detect weak assumptions",
     "license": "MIT",
-    "require": {
-        "nikic/php-parser": "^1.0"
-    },
     "authors": [
         {
             "name": "Rick Kuipers",
             "email": "io@rskuipers.com"
         }
     ],
+    "require": {
+        "nikic/php-parser": "^1.0"
+    },
+    "require-dev": {
+        "phpspec/phpspec": "^2.2",
+        "phpunit/phpunit": "^4.8",
+        "phpspec/prophecy-phpunit": "^1.1"
+    },
     "autoload": {
         "psr-4": {
             "PhpAssumptions\\": "src/PhpAssumptions"
         }
     },
-    "bin": ["bin/phpa"],
-    "require-dev": {
-        "phpspec/phpspec": "^2.2",
-        "phpunit/phpunit": "^4.8",
-        "phpspec/prophecy-phpunit": "^1.1"
-    }
+    "bin": ["bin/phpa"]
 }
