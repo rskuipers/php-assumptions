@@ -2,6 +2,7 @@
 
 namespace PhpAssumptions;
 
+use PhpParser\Node;
 use PhpParser\NodeTraverserInterface;
 use PhpParser\ParserAbstract;
 
@@ -43,7 +44,9 @@ class Analyser
         foreach ($files as $file) {
             $this->nodeVisitor->setCurrentFile($file);
             $statements = $this->parser->parse(file_get_contents($file));
-            $this->traverser->traverse($statements);
+            if (is_array($statements) || $statements instanceof Node) {
+                $this->traverser->traverse($statements);
+            }
         }
     }
 }
