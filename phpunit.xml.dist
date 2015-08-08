@@ -1,8 +1,15 @@
 <phpunit
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.8s/phpunit.xsd"
+        xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.8/phpunit.xsd"
         colors="true"
         bootstrap="tests/bootstrap.php">
+
+    <filter>
+        <whitelist>
+            <directory>src/</directory>
+        </whitelist>
+    </filter>
+
     <testsuites>
         <testsuite name="unit">
             <directory>tests/unit/</directory>
@@ -11,4 +18,8 @@
             <directory>tests/integration/</directory>
         </testsuite>
     </testsuites>
+
+    <logging>
+        <log type="coverage-clover" target="build/reports/phpunit.xml" />
+    </logging>
 </phpunit>
