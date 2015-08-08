@@ -1,0 +1,4 @@
+bootstrap: tests/bootstrap.php
+suites:
+  default:
+    spec_path: tests/

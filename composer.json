@@ -16,5 +16,10 @@
             "PhpAssumptions\\": "src/PhpAssumptions"
         }
     },
-    "bin": ["bin/phpa"]
+    "bin": ["bin/phpa"],
+    "require-dev": {
+        "phpspec/phpspec": "^2.2",
+        "phpunit/phpunit": "^4.8",
+        "phpspec/prophecy-phpunit": "^1.1"
+    }
 }
