@@ -13,4 +13,4 @@ foreach ($autoloaders as $autoloader) {
 ini_set('xdebug.max_nesting_level', 3000);
 
 $cli = new \PhpAssumptions\Cli();
-$cli->handle($argv);
+$cli->handle(array_splice($argv, 1));

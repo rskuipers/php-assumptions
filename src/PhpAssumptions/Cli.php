@@ -3,6 +3,10 @@
 namespace PhpAssumptions;
 
 use PhpAssumptions\Output\PrettyOutput;
+use PhpParser\Lexer;
+use PhpParser\NodeTraverser;
+use PhpParser\Parser;
+use PhpParser\PrettyPrinter\Standard;
 
 class Cli
 {
@@ -13,15 +17,19 @@ class Cli
      */
     public function handle(array $args)
     {
-        if (count($args) === 1) {
+        if (count($args) === 0) {
             $this->showHelp();
             return;
         }
 
         $output = new PrettyOutput();
-        $analyser = new Analyser($output);
+        $analyser = new Analyser(
+            new Parser(new Lexer()),
+            new NodeVisitor($output, new Standard()),
+            new NodeTraverser()
+        );
 
-        $target = $args[1];
+        $target = $args[0];
         $targets = [];
 
         if (is_file($target)) {
@@ -43,6 +51,6 @@ class Cli
 
     private function showHelp()
     {
-        echo 'Usage: phpassumptions <file/directory>' . PHP_EOL;
+        echo 'Usage: phpa <file/directory>' . PHP_EOL;
     }
 }

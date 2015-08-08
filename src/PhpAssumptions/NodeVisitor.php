@@ -5,7 +5,7 @@ namespace PhpAssumptions;
 use PhpAssumptions\Output\OutputInterface;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
-use PhpParser\PrettyPrinter\Standard;
+use PhpParser\PrettyPrinterAbstract;
 
 class NodeVisitor extends NodeVisitorAbstract
 {
@@ -20,16 +20,17 @@ class NodeVisitor extends NodeVisitorAbstract
     private $currentFile;
 
     /**
-     * @var Standard
+     * @var PrettyPrinterAbstract
      */
     private $prettyPrinter;
 
     /**
      * @param OutputInterface $output
+     * @param PrettyPrinterAbstract $prettyPrinter
      */
-    public function __construct(OutputInterface $output)
+    public function __construct(OutputInterface $output, PrettyPrinterAbstract $prettyPrinter)
     {
-        $this->prettyPrinter = new Standard();
+        $this->prettyPrinter = $prettyPrinter;
         $this->output = $output;
     }
 

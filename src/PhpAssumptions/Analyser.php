@@ -2,15 +2,19 @@
 
 namespace PhpAssumptions;
 
-use PhpAssumptions\Output\OutputInterface;
 use PhpParser\Lexer;
-use PhpParser\NodeTraverser;
-use PhpParser\Parser;
+use PhpParser\NodeTraverserInterface;
+use PhpParser\ParserAbstract;
 
 class Analyser
 {
     /**
-     * @var NodeTraverser
+     * @var ParserAbstract
+     */
+    private $parser;
+
+    /**
+     * @var NodeTraverserInterface
      */
     private $traverser;
 
@@ -20,13 +24,15 @@ class Analyser
     private $nodeVisitor;
 
     /**
-     * @param OutputInterface $output
+     * @param ParserAbstract $parser
+     * @param NodeVisitor $nodeVisitor
+     * @param NodeTraverserInterface $nodeTraverser
      */
-    public function __construct(OutputInterface $output)
+    public function __construct(ParserAbstract $parser, NodeVisitor $nodeVisitor, NodeTraverserInterface $nodeTraverser)
     {
-        $this->nodeVisitor = new NodeVisitor($output);
-
-        $this->traverser = new NodeTraverser();
+        $this->parser = $parser;
+        $this->nodeVisitor = $nodeVisitor;
+        $this->traverser = $nodeTraverser;
         $this->traverser->addVisitor($this->nodeVisitor);
     }
 
@@ -35,11 +41,9 @@ class Analyser
      */
     public function analyse(array $files)
     {
-        $parser = new Parser(new Lexer());
-
         foreach ($files as $file) {
             $this->nodeVisitor->setCurrentFile($file);
-            $statements = $parser->parse(file_get_contents($file));
+            $statements = $this->parser->parse(file_get_contents($file));
             $this->traverser->traverse($statements);
         }
     }
