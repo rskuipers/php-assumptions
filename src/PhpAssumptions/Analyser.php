@@ -2,7 +2,6 @@
 
 namespace PhpAssumptions;
 
-use PhpParser\Lexer;
 use PhpParser\NodeTraverserInterface;
 use PhpParser\ParserAbstract;
 
