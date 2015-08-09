@@ -1,3 +1,6 @@
 tools:
   external_code_coverage:
     runs: 2
+  php_code_sniffer:
+    config:
+      standard: PSR2
