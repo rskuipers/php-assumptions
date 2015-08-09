@@ -1,6 +1,8 @@
 <?php
 
+define('FIXTURES_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR . 'fixtures');
+
 function fixture($filename)
 {
-    return __DIR__ . '/fixtures/' . $filename;
+    return FIXTURES_DIR . DIRECTORY_SEPARATOR . $filename;
 }
