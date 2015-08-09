@@ -13,27 +13,25 @@ class Detector
      */
     public function scan(Node $node)
     {
+        $result = false;
+
         if ($node instanceof Expr\BinaryOp\NotIdentical || $node instanceof Expr\BinaryOp\NotEqual
             || $node instanceof Expr\BinaryOp\Equal
         ) {
             if ($this->bidirectionalCheck($node, Expr\Variable::class, Expr\ConstFetch::class)) {
-                return true;
-            }
-
-            if (!$node instanceof Expr\BinaryOp\NotIdentical
+                $result = true;
+            } elseif (!$node instanceof Expr\BinaryOp\NotIdentical
                 && $this->bidirectionalCheck($node, Expr\Variable::class, Node\Scalar::class)
             ) {
-                return true;
+                $result = true;
             }
-        }
-
-        if (($node instanceof Expr\BooleanNot && $node->expr instanceof Expr\Variable)
+        } elseif (($node instanceof Expr\BooleanNot && $node->expr instanceof Expr\Variable)
             || property_exists($node, 'cond') && $node->cond instanceof Expr\Variable
         ) {
-            return true;
+            $result = true;
         }
 
-        return false;
+        return $result;
     }
 
     /**
