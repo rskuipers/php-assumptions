@@ -6,6 +6,9 @@ use PhpAssumptions\Cli;
 
 class PrettyOutput implements OutputInterface
 {
+    /**
+     * @var array
+     */
     private $buffer = [];
 
     /**

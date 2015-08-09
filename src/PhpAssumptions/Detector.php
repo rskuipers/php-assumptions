@@ -13,18 +13,24 @@ class Detector
      */
     public function scan(Node $node)
     {
-        if ($this->isWeakCondition($node)) {
-            $checks = [
-                [Expr\Variable::class, Expr\ConstFetch::class],
-                [Expr\Variable::class, Node\Scalar::class],
-            ];
-
-            /** @var Expr $node */
-            foreach ($checks as $check) {
-                if ($this->bidirectionalCheck($node, $check[0], $check[1])) {
-                    return true;
-                }
+        if ($node instanceof Expr\BinaryOp\NotIdentical || $node instanceof Expr\BinaryOp\NotEqual
+            || $node instanceof Expr\BinaryOp\Equal
+        ) {
+            if ($this->bidirectionalCheck($node, Expr\Variable::class, Expr\ConstFetch::class)) {
+                return true;
             }
+
+            if (!$node instanceof Expr\BinaryOp\NotIdentical
+                && $this->bidirectionalCheck($node, Expr\Variable::class, Node\Scalar::class)
+            ) {
+                return true;
+            }
+        }
+
+        if (($node instanceof Expr\BooleanNot && $node->expr instanceof Expr\Variable)
+            || property_exists($node, 'cond') && $node->cond instanceof Expr\Variable
+        ) {
+            return true;
         }
 
         return false;
@@ -50,15 +56,5 @@ class Detector
     private function isInstanceOf($object, $class)
     {
         return get_class($object) === $class || is_subclass_of($object, $class);
-    }
-
-    /**
-     * @param Node $node
-     * @return bool
-     */
-    private function isWeakCondition(Node $node)
-    {
-        return $node instanceof Expr\BinaryOp\NotIdentical || $node instanceof Expr\BinaryOp\NotEqual
-            || $node instanceof Expr\BinaryOp\Equal;
     }
 }

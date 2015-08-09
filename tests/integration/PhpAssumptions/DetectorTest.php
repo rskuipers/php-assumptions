@@ -40,12 +40,42 @@ class NodeVisitorTest extends ProphecyTestCase
     /**
      * @test
      */
-    public function itShouldDetectNotFalse()
+    public function itShouldDetectEqualsNotFalse()
     {
         $node = $this->parser->parse('<?php $test !== false;')[0];
         $this->assertTrue($this->detector->scan($node));
 
         $node = $this->parser->parse('<?php false !== $test;')[0];
+        $this->assertTrue($this->detector->scan($node));
+
+        $node = $this->parser->parse('<?php false != $test;')[0];
+        $this->assertTrue($this->detector->scan($node));
+
+        $node = $this->parser->parse('<?php $test != false;')[0];
+        $this->assertTrue($this->detector->scan($node));
+
+        $node = $this->parser->parse('<?php !$test;')[0];
+        $this->assertTrue($this->detector->scan($node));
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldDetectEqualsTrue()
+    {
+        $node = $this->parser->parse('<?php $test !== true;')[0];
+        $this->assertTrue($this->detector->scan($node));
+
+        $node = $this->parser->parse('<?php true !== $test;')[0];
+        $this->assertTrue($this->detector->scan($node));
+
+        $node = $this->parser->parse('<?php true != $test;')[0];
+        $this->assertTrue($this->detector->scan($node));
+
+        $node = $this->parser->parse('<?php $test != true;')[0];
+        $this->assertTrue($this->detector->scan($node));
+
+        $node = $this->parser->parse('<?php $test ? "" : "";')[0];
         $this->assertTrue($this->detector->scan($node));
     }
 
@@ -59,5 +89,17 @@ class NodeVisitorTest extends ProphecyTestCase
 
         $node = $this->parser->parse('<?php "test" == $test;')[0];
         $this->assertTrue($this->detector->scan($node));
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldNotDetectIdenticalScalar()
+    {
+        $node = $this->parser->parse('<?php $test === "";')[0];
+        $this->assertFalse($this->detector->scan($node));
+
+        $node = $this->parser->parse('<?php $test !== "";')[0];
+        $this->assertFalse($this->detector->scan($node));
     }
 }
