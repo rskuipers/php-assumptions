@@ -28,4 +28,18 @@ class CliTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue(strpos($contents, 'Usage: phpa') !== false);
     }
+
+    /**
+     * @test
+     */
+    public function itShouldTraverseADirectoryIfTargetIsADirectory()
+    {
+        ob_start();
+        $this->cli->handle([dirname(__FILE__) . '/../../fixtures']);
+        $contents = ob_get_contents();
+        ob_end_clean();
+
+        // It should traverse the fixtures directory and hit MyClass as violation
+        $this->assertTrue(strpos($contents, 'fixtures/MyClass.php:9: $dog !== null;') !== false);
+    }
 }
