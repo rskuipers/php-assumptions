@@ -3,6 +3,9 @@ php:
   - 5.5
   - 5.6
   - hhvm
+branches:
+  only:
+    - master
 install:
   - composer selfupdate
   - composer install --prefer-source
