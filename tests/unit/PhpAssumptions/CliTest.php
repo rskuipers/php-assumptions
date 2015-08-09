@@ -35,7 +35,7 @@ class CliTest extends \PHPUnit_Framework_TestCase
     public function itShouldTraverseADirectoryIfTargetIsADirectory()
     {
         ob_start();
-        $this->cli->handle([dirname(__FILE__) . '/../../fixtures']);
+        $this->cli->handle([FIXTURES_DIR]);
         $contents = ob_get_contents();
         ob_end_clean();
 
