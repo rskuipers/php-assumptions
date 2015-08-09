@@ -33,6 +33,20 @@ if ($user instanceof User) {
 }
 ```
 
+## Tests
+This project is built with [PhpSpec](https://github.com/phpspec/phpspec) and [PHPUnit](https://github.com/sebastianbergmann/phpunit).
+In order to run these tests make sure you have dev dependencies installed with composer.
+
+Running PhpSpec
+```sh
+$ ./vendor/bin/phpspec run
+```
+
+Running PHPUnit:
+```sh
+$ ./vendor/bin/phpunit
+```
+
 ## Future
 This tool is the result of a proof of concept inspired by the "[From assumptions to assertions](http://rskuipers.com/entry/from-assumptions-to-assertions)" blog post.
 I have some ideas to make it more context-aware and have it give suggestions or detect more cases of weak assumptions.
