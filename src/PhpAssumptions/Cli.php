@@ -3,6 +3,7 @@
 namespace PhpAssumptions;
 
 use PhpAssumptions\Output\PrettyOutput;
+use PhpAssumptions\Parser\NodeVisitor;
 use PhpParser\Lexer;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
@@ -25,7 +26,7 @@ class Cli
         $output = new PrettyOutput();
         $analyser = new Analyser(
             new Parser(new Lexer()),
-            new NodeVisitor($output, new Standard()),
+            new NodeVisitor($output, new Standard(), new Detector()),
             new NodeTraverser()
         );
 

@@ -3,7 +3,7 @@
 namespace spec\PhpAssumptions;
 
 use PhpAssumptions\Analyser;
-use PhpAssumptions\NodeVisitor;
+use PhpAssumptions\Parser\NodeVisitor;
 use PhpParser\Node;
 use PhpParser\NodeTraverserInterface;
 use PhpParser\ParserAbstract;

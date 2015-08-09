@@ -2,7 +2,8 @@
 
 namespace spec\PhpAssumptions;
 
-use PhpAssumptions\NodeVisitor;
+use PhpAssumptions\Detector;
+use PhpAssumptions\Parser\NodeVisitor;
 use PhpAssumptions\Output\OutputInterface;
 use PhpParser\PrettyPrinterAbstract;
 use PhpSpec\ObjectBehavior;
@@ -13,9 +14,9 @@ use Prophecy\Argument;
  */
 class NodeVisitorSpec extends ObjectBehavior
 {
-    public function let(OutputInterface $output, PrettyPrinterAbstract $prettyPrinter)
+    public function let(OutputInterface $output, PrettyPrinterAbstract $prettyPrinter, Detector $detector)
     {
-        $this->beConstructedWith($output, $prettyPrinter);
+        $this->beConstructedWith($output, $prettyPrinter, $detector);
     }
 
     public function it_is_initializable()

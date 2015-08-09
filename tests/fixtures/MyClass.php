@@ -4,9 +4,10 @@ namespace fixtures;
 
 class MyClass
 {
-    public function run($var1)
+    public function run($dog)
     {
-        if ($var1 !== null) { }
-        if ($var1 !== false) { }
+        if ($dog !== null) {
+            $dog->woof();
+        }
     }
 }

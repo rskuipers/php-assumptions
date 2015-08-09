@@ -1,7 +1,8 @@
 <?php
 
-namespace PhpAssumptions;
+namespace PhpAssumptions\Parser;
 
+use PhpAssumptions\Detector;
 use PhpAssumptions\Output\OutputInterface;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
@@ -25,33 +26,34 @@ class NodeVisitor extends NodeVisitorAbstract
     private $prettyPrinter;
 
     /**
+     * @var Detector
+     */
+    private $detector;
+
+    /**
      * @param OutputInterface $output
      * @param PrettyPrinterAbstract $prettyPrinter
+     * @param Detector $detector
      */
-    public function __construct(OutputInterface $output, PrettyPrinterAbstract $prettyPrinter)
+    public function __construct(OutputInterface $output, PrettyPrinterAbstract $prettyPrinter, Detector $detector)
     {
         $this->prettyPrinter = $prettyPrinter;
         $this->output = $output;
+        $this->detector = $detector;
     }
 
     /**
      * @param Node $node
      * @return false|null|Node|\PhpParser\Node[]|void
      */
-    public function leaveNode(Node $node) {
-        if ($node instanceof Node\Stmt\If_
-            && ($node->cond instanceof Node\Expr\BinaryOp\NotIdentical || $node->cond instanceof Node\Expr\BinaryOp\NotEqual)
-        ) {
-            $cond = $node->cond;
-            if ($cond->left instanceof Node\Expr\Variable && $cond->right instanceof Node\Expr\ConstFetch
-                || $cond->right instanceof Node\Expr\Variable && $cond->left instanceof Node\Expr\ConstFetch
-            ) {
-                $this->output->write(
-                    $this->currentFile,
-                    $node->getLine(),
-                    explode("\n", $this->prettyPrinter->prettyPrint([$node]))[0]
-                );
-            }
+    public function leaveNode(Node $node)
+    {
+        if ($this->detector->scan($node)) {
+            $this->output->write(
+                $this->currentFile,
+                $node->getLine(),
+                explode("\n", $this->prettyPrinter->prettyPrint([$node]))[0]
+            );
         }
     }
 
