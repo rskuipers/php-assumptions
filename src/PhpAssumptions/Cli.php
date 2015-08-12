@@ -24,6 +24,7 @@ class Cli
         }
 
         $output = new PrettyOutput();
+
         $analyser = new Analyser(
             new Parser(new Lexer()),
             new NodeVisitor($output, new Standard(), new Detector()),
