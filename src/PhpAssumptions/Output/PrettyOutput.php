@@ -2,14 +2,27 @@
 
 namespace PhpAssumptions\Output;
 
-use PhpAssumptions\Cli;
+use League\CLImate\CLImate;
 
 class PrettyOutput implements OutputInterface
 {
     /**
+     * @var CLImate
+     */
+    private $cli;
+
+    /**
      * @var array
      */
-    private $buffer = [];
+    private $table = [];
+
+    /**
+     * @param CLImate $cli
+     */
+    public function __construct(CLImate $cli)
+    {
+        $this->cli = $cli;
+    }
 
     /**
      * @param string $file
@@ -18,23 +31,19 @@ class PrettyOutput implements OutputInterface
      */
     public function write($file, $line, $message)
     {
-        $this->buffer[] = [
+        $this->table[] = [
             'file' => $file,
             'line' => $line,
-            'message' => $message
+            'message' => $message,
         ];
     }
 
     public function flush()
     {
-        printf('PHPAssumptions analyser v%s by @rskuipers' . PHP_EOL . PHP_EOL, Cli::VERSION);
-
-        foreach ($this->buffer as $warning) {
-            echo $warning['file'] . ':' . $warning['line'] . ': ' . $warning['message'] . PHP_EOL;
+        if (count($this->table) > 0) {
+            $this->cli->table($this->table)->br();
         }
 
-        echo PHP_EOL;
-
-        echo 'Total warnings: ' . count($this->buffer) . PHP_EOL;
+        $this->cli->out('Total warnings: ' . count($this->table));
     }
 }

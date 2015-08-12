@@ -2,44 +2,48 @@
 
 namespace unit\PhpAssumptions;
 
+use League\CLImate\Argument\Manager;
+use League\CLImate\CLImate;
 use PhpAssumptions\Cli;
+use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTestCase;
 
-class CliTest extends \PHPUnit_Framework_TestCase
+class CliTest extends ProphecyTestCase
 {
     /**
      * @var Cli
      */
     private $cli;
 
+    /**
+     * @var CLImate
+     */
+    private $climate;
+
     public function setUp()
     {
-        $this->cli = new Cli();
+        $argumentManager = $this->prophesize(Manager::class);
+        $argumentManager->add(Argument::type('array'))->shouldBeCalled();
+
+        $this->climate = $this->prophesize(CLImate::class);
+
+        $this->climate->arguments = $argumentManager->reveal();
+        $this->climate->out(Argument::containingString('PHPAssumptions analyser'))
+            ->shouldBeCalled()
+            ->willReturn($this->climate);
+
+        $this->climate->br()->shouldBeCalled();
+
+        $this->cli = new Cli($this->climate->reveal());
     }
 
     /**
      * @test
      */
-    public function itShouldShowHelpWithNoArgs()
+    public function itShouldShowUsageWithNoArgs()
     {
-        ob_start();
-        $this->cli->handle([]);
-        $contents = ob_get_contents();
-        ob_end_clean();
-
-        $this->assertTrue(strpos($contents, 'Usage: phpa') !== false);
-    }
-
-    /**
-     * @test
-     */
-    public function itShouldTraverseADirectoryIfTargetIsADirectory()
-    {
-        ob_start();
-        $this->cli->handle([FIXTURES_DIR]);
-        $contents = ob_get_contents();
-        ob_end_clean();
-
-        // It should traverse the fixtures directory and hit MyClass as violation
-        $this->assertTrue(strpos($contents, 'fixtures/MyClass.php:9: $dog !== null;') !== false);
+        $args = ['phpa'];
+        $this->climate->usage($args)->shouldBeCalled();
+        $this->cli->handle($args);
     }
 }
