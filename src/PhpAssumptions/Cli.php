@@ -30,7 +30,7 @@ class Cli
             'format' => [
                 'prefix'       => 'f',
                 'longPrefix'   => 'format',
-                'description'  => 'Format (pretty, xml)',
+                'description'  => 'Format (pretty)',
                 'defaultValue' => 'pretty',
             ],
         ]);
