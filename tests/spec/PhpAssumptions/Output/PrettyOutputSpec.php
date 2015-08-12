@@ -2,6 +2,7 @@
 
 namespace spec\PhpAssumptions\Output;
 
+use League\CLImate\CLImate;
 use PhpAssumptions\Output\OutputInterface;
 use PhpAssumptions\Output\PrettyOutput;
 use PhpSpec\ObjectBehavior;
@@ -12,6 +13,11 @@ use Prophecy\Argument;
  */
 class PrettyOutputSpec extends ObjectBehavior
 {
+    public function let(CLImate $cli)
+    {
+        $this->beConstructedWith($cli);
+    }
+
     public function it_is_initializable()
     {
         $this->shouldHaveType(PrettyOutput::class);

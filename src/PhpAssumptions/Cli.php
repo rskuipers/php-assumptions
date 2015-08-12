@@ -2,6 +2,7 @@
 
 namespace PhpAssumptions;
 
+use League\CLImate\CLImate;
 use PhpAssumptions\Output\PrettyOutput;
 use PhpAssumptions\Parser\NodeVisitor;
 use PhpParser\Lexer;
@@ -14,16 +15,48 @@ class Cli
     const VERSION = '0.2.0';
 
     /**
+     * @var CLImate
+     */
+    private $cli;
+
+    public function __construct(CLImate $cli)
+    {
+        $this->cli = $cli;
+        $this->cli->arguments->add([
+            'path' => [
+                'description' => 'The path to analyse',
+                'required' => true,
+            ],
+            'format' => [
+                'prefix'       => 'f',
+                'longPrefix'   => 'format',
+                'description'  => 'Format (pretty, xml)',
+                'defaultValue' => 'pretty',
+            ],
+        ]);
+    }
+
+    /**
      * @param array $args
      */
     public function handle(array $args)
     {
-        if (count($args) === 0) {
-            $this->showHelp();
+        $this->cli->out(sprintf('PHPAssumptions analyser v%s by @rskuipers', Cli::VERSION))->br();
+
+        try {
+            $this->cli->arguments->parse($args);
+        } catch (\Exception $e) {
+            $this->cli->usage($args);
             return;
         }
 
-        $output = new PrettyOutput();
+        $output = null;
+
+        switch ($this->cli->arguments->get('format')) {
+            default:
+                $output = new PrettyOutput($this->cli);
+                break;
+        }
 
         $analyser = new Analyser(
             new Parser(new Lexer()),
@@ -31,7 +64,7 @@ class Cli
             new NodeTraverser()
         );
 
-        $target = $args[0];
+        $target = $this->cli->arguments->get('path');
         $targets = [];
 
         if (is_file($target)) {
@@ -49,10 +82,5 @@ class Cli
         $analyser->analyse($targets);
 
         $output->flush();
-    }
-
-    private function showHelp()
-    {
-        echo 'Usage: phpa <file/directory>' . PHP_EOL;
     }
 }
