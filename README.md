@@ -34,13 +34,8 @@ if ($user instanceof User) {
 ```
 
 ## Tests
-This project is built with [PhpSpec](https://github.com/phpspec/phpspec) and [PHPUnit](https://github.com/sebastianbergmann/phpunit).
+This project is built with [PHPUnit](https://github.com/sebastianbergmann/phpunit) and [Prophecy](https://github.com/phpspec/prophecy-phpunit).
 In order to run these tests make sure you have dev dependencies installed with composer.
-
-Running PhpSpec
-```sh
-$ ./vendor/bin/phpspec run
-```
 
 Running PHPUnit:
 ```sh
