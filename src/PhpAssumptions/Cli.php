@@ -57,8 +57,6 @@ class Cli
             return;
         }
 
-        $output = null;
-
         switch ($this->cli->arguments->get('format')) {
             case 'xml':
                 $output = new XmlOutput($this->cli, $this->cli->arguments->get('output'));
