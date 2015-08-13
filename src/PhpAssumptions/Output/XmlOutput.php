@@ -2,6 +2,7 @@
 
 namespace PhpAssumptions\Output;
 
+use League\CLImate\CLImate;
 use PhpAssumptions\Cli;
 
 class XmlOutput implements OutputInterface
@@ -22,10 +23,17 @@ class XmlOutput implements OutputInterface
     private $xpath;
 
     /**
+     * @var CLImate
+     */
+    private $cli;
+
+    /**
+     * @param CLImate $cli
      * @param string $file
      */
-    public function __construct($file)
+    public function __construct(CLImate $cli, $file)
     {
+        $this->cli = $cli;
         $this->file = $file;
         $this->document = new \DOMDocument();
 
@@ -65,8 +73,13 @@ class XmlOutput implements OutputInterface
 
     public function flush()
     {
+        $totalWarnings = $this->xpath->query('/phpa/files/file/line')->length;
+        $this->document->documentElement->setAttribute('warnings', $totalWarnings);
+
         $this->document->preserveWhiteSpace = false;
         $this->document->formatOutput = true;
         $this->document->save($this->file);
+
+        $this->cli->out(sprintf('Written %d warnings to file %s', $totalWarnings, $this->file));
     }
 }
