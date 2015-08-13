@@ -7,7 +7,7 @@ use PhpAssumptions\Cli;
 class XmlOutput implements OutputInterface
 {
     /**
-     * @var \SimpleXMLElement
+     * @var \DOMDocument
      */
     private $document;
 
@@ -17,12 +17,26 @@ class XmlOutput implements OutputInterface
     private $file;
 
     /**
+     * @var \DOMXPath
+     */
+    private $xpath;
+
+    /**
      * @param string $file
      */
     public function __construct($file)
     {
         $this->file = $file;
-        $this->document = new \SimpleXMLElement('<phpa version="' . Cli::VERSION . '"><files></files></phpa>');
+        $this->document = new \DOMDocument();
+
+        $phpaNode = $this->document->createElement('phpa');
+        $phpaNode->setAttribute('version', Cli::VERSION);
+        $this->document->appendChild($phpaNode);
+
+        $filesNode = $this->document->createElement('files');
+        $phpaNode->appendChild($filesNode);
+
+        $this->xpath = new \DOMXPath($this->document);
     }
 
     /**
@@ -32,21 +46,27 @@ class XmlOutput implements OutputInterface
      */
     public function write($file, $line, $message)
     {
-        $fileElements = $this->document->xpath('/phpa/files/file[@name="' . $file . '"]');
-        if (count($fileElements) === 0) {
-            $fileElement = $this->document->xpath('/phpa/files')[0]->addChild('file');
-            $fileElement->addAttribute('name', $file);
+        $fileElements = $this->xpath->query('/phpa/files/file[@name="' . $file . '"]');
+
+        if ($fileElements->length === 0) {
+            $files = $this->xpath->query('/phpa/files')->item(0);
+            $fileElement = $this->document->createElement('file');
+            $fileElement->setAttribute('name', $file);
+            $files->appendChild($fileElement);
         } else {
-            $fileElement = $fileElements[0];
+            $fileElement = $fileElements->item(0);
         }
 
-        $lineElement = $fileElement->addChild('line');
-        $lineElement->addAttribute('number', $line);
-        $lineElement->addAttribute('message', $message);
+        $lineElement = $this->document->createElement('line');
+        $lineElement->setAttribute('number', $line);
+        $lineElement->setAttribute('message', $message);
+        $fileElement->appendChild($lineElement);
     }
 
     public function flush()
     {
-        $this->document->saveXML($this->file);
+        $this->document->preserveWhiteSpace = false;
+        $this->document->formatOutput = true;
+        $this->document->save($this->file);
     }
 }
