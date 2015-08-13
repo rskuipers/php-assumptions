@@ -4,6 +4,7 @@ namespace PhpAssumptions;
 
 use League\CLImate\CLImate;
 use PhpAssumptions\Output\PrettyOutput;
+use PhpAssumptions\Output\XmlOutput;
 use PhpAssumptions\Parser\NodeVisitor;
 use PhpParser\Lexer;
 use PhpParser\NodeTraverser;
@@ -28,10 +29,16 @@ class Cli
                 'required' => true,
             ],
             'format' => [
-                'prefix'       => 'f',
-                'longPrefix'   => 'format',
-                'description'  => 'Format (pretty)',
+                'prefix' => 'f',
+                'longPrefix' => 'format',
+                'description' => 'Format (pretty, xml)',
                 'defaultValue' => 'pretty',
+            ],
+            'output' => [
+                'prefix' => 'o',
+                'longPrefix' => 'output',
+                'description' => 'Output file',
+                'defaultValue' => 'phpa.xml',
             ],
         ]);
     }
@@ -50,9 +57,10 @@ class Cli
             return;
         }
 
-        $output = null;
-
         switch ($this->cli->arguments->get('format')) {
+            case 'xml':
+                $output = new XmlOutput($this->cli, $this->cli->arguments->get('output'));
+                break;
             default:
                 $output = new PrettyOutput($this->cli);
                 break;
