@@ -108,5 +108,6 @@ class CliTest extends ProphecyTestCase
         $this->climate->out('Written 1 warning(s) to file ' . $output)->shouldBeCalled();
 
         $this->cli->handle(['phpa', $path]);
+        $this->assertTrue(is_file($output));
     }
 }
