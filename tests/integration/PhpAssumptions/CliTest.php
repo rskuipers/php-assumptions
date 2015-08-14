@@ -92,4 +92,21 @@ class CliTest extends ProphecyTestCase
 
         $this->cli->handle(['phpa', FIXTURES_DIR]);
     }
+
+    /**
+     * @test
+     */
+    public function itShouldAnalyseTargetFileAndOutputXml()
+    {
+        $path = fixture('MyClass.php');
+        $output = tempnam(sys_get_temp_dir(), 'xml');
+
+        $this->argumentManager->get('format')->shouldBeCalled()->willReturn('xml');
+        $this->argumentManager->get('path')->shouldBeCalled()->willReturn($path);
+        $this->argumentManager->get('output')->shouldBeCalled()->willReturn($output);
+
+        $this->climate->out('Written 1 warning(s) to file ' . $output)->shouldBeCalled();
+
+        $this->cli->handle(['phpa', $path]);
+    }
 }

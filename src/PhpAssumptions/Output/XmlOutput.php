@@ -80,6 +80,6 @@ class XmlOutput implements OutputInterface
         $this->document->formatOutput = true;
         $this->document->save($this->file);
 
-        $this->cli->out(sprintf('Written %d warnings to file %s', $totalWarnings, $this->file));
+        $this->cli->out(sprintf('Written %d warning(s) to file %s', $totalWarnings, $this->file));
     }
 }
