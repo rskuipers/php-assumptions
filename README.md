@@ -9,7 +9,8 @@ $ composer require --dev rskuipers/php-assumptions
 ```
 
 ## Introduction
-This is a static code analysis tool doing some basic checks for weak assumptions.
+PHP Assumptions is the result of a proof of concept inspired by the "[From assumptions to assertions](http://rskuipers.com/entry/from-assumptions-to-assertions)" blog post.
+It's a static code analysis tool doing checks for weak assumptions.
 
 This is an example of a **weak assumption**:
 
@@ -41,7 +42,3 @@ Running PHPUnit:
 ```sh
 $ ./vendor/bin/phpunit
 ```
-
-## Future
-This tool is the result of a proof of concept inspired by the "[From assumptions to assertions](http://rskuipers.com/entry/from-assumptions-to-assertions)" blog post.
-I have some ideas to make it more context-aware and have it give suggestions or detect more cases of weak assumptions.
