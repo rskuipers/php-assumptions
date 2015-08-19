@@ -2,7 +2,7 @@
 
 namespace PhpAssumptions;
 
-use PhpAssumptions\Parser\NodeVisitor;
+use PhpAssumptions\Output\OutputInterface;
 use PhpParser\Node;
 use PhpParser\NodeTraverserInterface;
 use PhpParser\ParserAbstract;
@@ -20,21 +20,28 @@ class Analyser
     private $traverser;
 
     /**
-     * @var NodeVisitor
+     * @var OutputInterface
      */
-    private $nodeVisitor;
+    private $output;
+
+    /**
+     * @var string
+     */
+    private $currentFile;
 
     /**
      * @param ParserAbstract $parser
-     * @param NodeVisitor $nodeVisitor
      * @param NodeTraverserInterface $nodeTraverser
+     * @param OutputInterface $output
      */
-    public function __construct(ParserAbstract $parser, NodeVisitor $nodeVisitor, NodeTraverserInterface $nodeTraverser)
-    {
+    public function __construct(
+        ParserAbstract $parser,
+        NodeTraverserInterface $nodeTraverser,
+        OutputInterface $output
+    ) {
         $this->parser = $parser;
-        $this->nodeVisitor = $nodeVisitor;
         $this->traverser = $nodeTraverser;
-        $this->traverser->addVisitor($this->nodeVisitor);
+        $this->output = $output;
     }
 
     /**
@@ -43,11 +50,20 @@ class Analyser
     public function analyse(array $files)
     {
         foreach ($files as $file) {
-            $this->nodeVisitor->setCurrentFile($file);
+            $this->currentFile = $file;
             $statements = $this->parser->parse(file_get_contents($file));
             if (is_array($statements) || $statements instanceof Node) {
                 $this->traverser->traverse($statements);
             }
         }
+    }
+
+    /**
+     * @param int $line
+     * @param string $message
+     */
+    public function found($line, $message)
+    {
+        $this->output->write($this->currentFile, $line, $message);
     }
 }

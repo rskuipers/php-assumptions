@@ -2,8 +2,8 @@
 
 namespace unit\PhpAssumptions\Parser;
 
+use PhpAssumptions\Analyser;
 use PhpAssumptions\Detector;
-use PhpAssumptions\Output\OutputInterface;
 use PhpAssumptions\Parser\NodeVisitor;
 use PhpParser\Node;
 use PhpParser\PrettyPrinter\Standard;
@@ -18,9 +18,9 @@ class NodeVisitorTest extends ProphecyTestCase
     private $nodeVisitor;
 
     /**
-     * @var OutputInterface
+     * @var Analyser
      */
-    private $output;
+    private $analyser;
 
     /**
      * @var Standard
@@ -39,12 +39,12 @@ class NodeVisitorTest extends ProphecyTestCase
 
     public function setUp()
     {
-        $this->output = $this->prophesize(OutputInterface::class);
+        $this->analyser = $this->prophesize(Analyser::class);
         $this->prettyPrinter = $this->prophesize(Standard::class);
         $this->detector = $this->prophesize(Detector::class);
         $this->node = $this->prophesize(Node::class);
         $this->nodeVisitor = new NodeVisitor(
-            $this->output->reveal(),
+            $this->analyser->reveal(),
             $this->prettyPrinter->reveal(),
             $this->detector->reveal()
         );
@@ -60,9 +60,8 @@ class NodeVisitorTest extends ProphecyTestCase
         $this->prettyPrinter->prettyPrint([$this->node])->shouldBeCalled()->willReturn('Weak assumption');
 
         $this->detector->scan($this->node)->shouldBeCalled()->willReturn(true);
-        $this->output->write('MyClass.php', 120, 'Weak assumption')->shouldBeCalled();
+        $this->analyser->found(120, 'Weak assumption')->shouldBeCalled();
 
-        $this->nodeVisitor->setCurrentFile('MyClass.php');
         $this->nodeVisitor->leaveNode($this->node->reveal());
     }
 
@@ -72,7 +71,7 @@ class NodeVisitorTest extends ProphecyTestCase
     public function itShouldCallScanAndNotWriteOnFailure()
     {
         $this->detector->scan($this->node)->shouldBeCalled()->willReturn(false);
-        $this->output->write(Argument::any(), Argument::any(), Argument::any())->shouldNotBeCalled();
+        $this->analyser->found(Argument::any(), Argument::any(), Argument::any())->shouldNotBeCalled();
         $this->nodeVisitor->leaveNode($this->node->reveal());
     }
 }

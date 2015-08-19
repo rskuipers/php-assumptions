@@ -2,8 +2,8 @@
 
 namespace PhpAssumptions\Parser;
 
+use PhpAssumptions\Analyser;
 use PhpAssumptions\Detector;
-use PhpAssumptions\Output\OutputInterface;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
 use PhpParser\PrettyPrinterAbstract;
@@ -11,9 +11,9 @@ use PhpParser\PrettyPrinterAbstract;
 class NodeVisitor extends NodeVisitorAbstract
 {
     /**
-     * @var OutputInterface
+     * @var Analyser
      */
-    private $output;
+    private $analyser;
 
     /**
      * @var string
@@ -31,14 +31,14 @@ class NodeVisitor extends NodeVisitorAbstract
     private $detector;
 
     /**
-     * @param OutputInterface $output
+     * @param Analyser $analyser
      * @param PrettyPrinterAbstract $prettyPrinter
      * @param Detector $detector
      */
-    public function __construct(OutputInterface $output, PrettyPrinterAbstract $prettyPrinter, Detector $detector)
+    public function __construct(Analyser $analyser, PrettyPrinterAbstract $prettyPrinter, Detector $detector)
     {
         $this->prettyPrinter = $prettyPrinter;
-        $this->output = $output;
+        $this->analyser = $analyser;
         $this->detector = $detector;
     }
 
@@ -49,19 +49,10 @@ class NodeVisitor extends NodeVisitorAbstract
     public function leaveNode(Node $node)
     {
         if ($this->detector->scan($node)) {
-            $this->output->write(
-                $this->currentFile,
+            $this->analyser->found(
                 $node->getLine(),
                 explode("\n", $this->prettyPrinter->prettyPrint([$node]))[0]
             );
         }
-    }
-
-    /**
-     * @param string $currentFile
-     */
-    public function setCurrentFile($currentFile)
-    {
-        $this->currentFile = $currentFile;
     }
 }

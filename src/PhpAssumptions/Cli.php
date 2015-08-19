@@ -66,11 +66,15 @@ class Cli
                 break;
         }
 
+        $nodeTraverser = new NodeTraverser();
+
         $analyser = new Analyser(
             new Parser(new Lexer()),
-            new NodeVisitor($output, new Standard(), new Detector()),
-            new NodeTraverser()
+            $nodeTraverser,
+            $output
         );
+
+        $nodeTraverser->addVisitor(new NodeVisitor($analyser, new Standard(), new Detector()));
 
         $target = $this->cli->arguments->get('path');
         $targets = [];
