@@ -26,6 +26,31 @@ class Detector
             return true;
         }
 
+        if ($this->isVariableExpression($node)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param Node $node
+     * @return bool
+     */
+    public function isBoolExpression(Node $node)
+    {
+        return $this->isVariableExpression($node) || $node instanceof Expr\BinaryOp
+            || $node instanceof Expr\BinaryOp\Identical || $node instanceof Expr\BinaryOp\NotIdentical
+            || $node instanceof Expr\BinaryOp\Equal || $node instanceof Expr\BinaryOp\NotEqual
+            || $node instanceof Expr\Instanceof_;
+    }
+
+    /**
+     * @param Node $node
+     * @return bool
+     */
+    private function isVariableExpression(Node $node)
+    {
         if ($node instanceof Expr\BooleanNot && $node->expr instanceof Expr\Variable) {
             return true;
         }
@@ -48,34 +73,6 @@ class Detector
         }
 
         return false;
-    }
-
-    /**
-     * @param Node $node
-     * @return bool
-     */
-    public function isBoolExpression(Node $node)
-    {
-        if ($node instanceof Expr\Ternary || $node instanceof Stmt\If_
-            || $node instanceof Stmt\ElseIf_ || $node instanceof Stmt\While_
-            || $node instanceof Stmt\For_
-        ) {
-            if ($node->cond instanceof Expr\Variable) {
-                return true;
-            }
-
-            if (is_array($node->cond)) {
-                foreach ($node->cond as $condition) {
-                    if ($condition instanceof Expr\Variable) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return $node instanceof Expr\BinaryOp || $node instanceof Expr\BinaryOp\Identical
-            || $node instanceof Expr\BinaryOp\NotIdentical || $node instanceof Expr\BinaryOp\Equal
-            || $node instanceof Expr\BinaryOp\NotEqual || $node instanceof Expr\Instanceof_;
     }
 
     /**

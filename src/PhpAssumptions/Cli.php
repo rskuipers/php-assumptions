@@ -70,8 +70,7 @@ class Cli
 
         $analyser = new Analyser(
             new Parser(new Lexer()),
-            $nodeTraverser,
-            $output
+            $nodeTraverser
         );
 
         $nodeTraverser->addVisitor(new NodeVisitor($analyser, new Standard(), new Detector()));
