@@ -1,6 +1,6 @@
 <?php
 
-namespace fixtures;
+namespace tests\fixtures;
 
 class MyOtherClass
 {

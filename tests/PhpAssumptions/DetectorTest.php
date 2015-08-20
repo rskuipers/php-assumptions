@@ -1,6 +1,6 @@
 <?php
 
-namespace integration\PhpAssumptions;
+namespace tests\PhpAssumptions;
 
 use PhpAssumptions\Detector;
 use PhpParser\Lexer;
@@ -77,6 +77,9 @@ class NodeVisitorTest extends ProphecyTestCase
 
         $node = $this->parser->parse('<?php $test ? "" : "";')[0];
         $this->assertTrue($this->detector->scan($node));
+
+        $node = $this->parser->parse('<?php if ($test instanceof Test) { } elseif ($test) { }')[0]->elseifs[0];
+        $this->assertTrue($this->detector->scan($node));
     }
 
     /**
@@ -94,12 +97,18 @@ class NodeVisitorTest extends ProphecyTestCase
     /**
      * @test
      */
-    public function itShouldNotDetectIdenticalScalar()
+    public function itShouldDetectWhileAssumptions()
     {
-        $node = $this->parser->parse('<?php $test === "";')[0];
-        $this->assertFalse($this->detector->scan($node));
+        $node = $this->parser->parse('<?php while ($test);')[0];
+        $this->assertTrue($this->detector->scan($node));
+    }
 
-        $node = $this->parser->parse('<?php $test !== "";')[0];
-        $this->assertFalse($this->detector->scan($node));
+    /**
+     * @test
+     */
+    public function itShouldDetectForAssumptions()
+    {
+        $node = $this->parser->parse('<?php for ($i = 0; $i; $i++);')[0];
+        $this->assertTrue($this->detector->scan($node));
     }
 }

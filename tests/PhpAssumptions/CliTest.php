@@ -1,6 +1,6 @@
 <?php
 
-namespace integration\PhpAssumptions;
+namespace tests\PhpAssumptions;
 
 use League\CLImate\Argument\Manager;
 use League\CLImate\CLImate;
@@ -11,11 +11,6 @@ use Prophecy\PhpUnit\ProphecyTestCase;
 class CliTest extends ProphecyTestCase
 {
     /**
-     * @var Manager
-     */
-    private $argumentManager;
-
-    /**
      * @var Cli
      */
     private $cli;
@@ -24,6 +19,11 @@ class CliTest extends ProphecyTestCase
      * @var CLImate
      */
     private $climate;
+
+    /**
+     * @var Manager
+     */
+    private $argumentManager;
 
     public function setUp()
     {
@@ -53,13 +53,14 @@ class CliTest extends ProphecyTestCase
         $this->argumentManager->get('format')->shouldBeCalled()->willReturn('pretty');
         $this->argumentManager->get('path')->shouldBeCalled()->willReturn($path);
 
-        $this->climate->table([[
-            'file' => $path,
-            'line' => 9,
-            'message' => '$dog !== null;'
-        ]])->shouldBeCalled()->willReturn($this->climate);
-
-        $this->climate->out('Total warnings: 1')->shouldBeCalled();
+        $this->climate->table([
+            [
+                'file' => $path,
+                'line' => 9,
+                'message' => '$dog !== null;',
+            ]
+        ])->shouldBeCalled()->willReturn($this->climate);
+        $this->climate->out('1 out of 2 boolean expressions are assumptions (50%)')->shouldBeCalled();
 
         $this->cli->handle(['phpa', $path]);
     }
@@ -88,7 +89,7 @@ class CliTest extends ProphecyTestCase
             ]
         ])->shouldBeCalled()->willReturn($this->climate);
 
-        $this->climate->out('Total warnings: 2')->shouldBeCalled();
+        $this->climate->out('2 out of 3 boolean expressions are assumptions (67%)')->shouldBeCalled();
 
         $this->cli->handle(['phpa', FIXTURES_DIR]);
     }
@@ -105,9 +106,21 @@ class CliTest extends ProphecyTestCase
         $this->argumentManager->get('path')->shouldBeCalled()->willReturn($path);
         $this->argumentManager->get('output')->shouldBeCalled()->willReturn($output);
 
-        $this->climate->out('Written 1 warning(s) to file ' . $output)->shouldBeCalled();
+        $this->climate->out('Written 1 assumption(s) to file ' . $output)->shouldBeCalled();
 
         $this->cli->handle(['phpa', $path]);
         $this->assertTrue(is_file($output));
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldShowUsageWithNoArgs()
+    {
+        $this->argumentManager->parse(Argument::type('array'))->willThrow(\Exception::class);
+
+        $args = ['phpa'];
+        $this->climate->usage($args)->shouldBeCalled();
+        $this->cli->handle($args);
     }
 }

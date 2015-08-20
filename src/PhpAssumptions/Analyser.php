@@ -2,7 +2,7 @@
 
 namespace PhpAssumptions;
 
-use PhpAssumptions\Output\OutputInterface;
+use PhpAssumptions\Output\Result;
 use PhpParser\Node;
 use PhpParser\NodeTraverserInterface;
 use PhpParser\ParserAbstract;
@@ -20,32 +20,31 @@ class Analyser
     private $traverser;
 
     /**
-     * @var OutputInterface
-     */
-    private $output;
-
-    /**
      * @var string
      */
     private $currentFile;
 
     /**
+     * @var Result
+     */
+    private $result;
+
+    /**
      * @param ParserAbstract $parser
      * @param NodeTraverserInterface $nodeTraverser
-     * @param OutputInterface $output
      */
     public function __construct(
         ParserAbstract $parser,
-        NodeTraverserInterface $nodeTraverser,
-        OutputInterface $output
+        NodeTraverserInterface $nodeTraverser
     ) {
         $this->parser = $parser;
         $this->traverser = $nodeTraverser;
-        $this->output = $output;
+        $this->result = new Result();
     }
 
     /**
      * @param array $files
+     * @return Result
      */
     public function analyse(array $files)
     {
@@ -56,14 +55,21 @@ class Analyser
                 $this->traverser->traverse($statements);
             }
         }
+
+        return $this->result;
     }
 
     /**
      * @param int $line
      * @param string $message
      */
-    public function found($line, $message)
+    public function foundAssumption($line, $message)
     {
-        $this->output->write($this->currentFile, $line, $message);
+        $this->result->addAssumption($this->currentFile, $line, $message);
+    }
+
+    public function foundBoolExpression()
+    {
+        $this->result->increaseBoolExpressionsCount();
     }
 }

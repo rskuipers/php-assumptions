@@ -1,9 +1,10 @@
 <?php
 
-namespace unit\PhpAssumptions\Output;
+namespace tests\PhpAssumptions\Output;
 
 use League\CLImate\CLImate;
 use PhpAssumptions\Cli;
+use PhpAssumptions\Output\Result;
 use Prophecy\PhpUnit\ProphecyTestCase;
 use PhpAssumptions\Output\XmlOutput;
 
@@ -20,6 +21,11 @@ class XmlOutputTest extends ProphecyTestCase
     private $cli;
 
     /**
+     * @var Result
+     */
+    private $result;
+
+    /**
      * @var string
      */
     private $file;
@@ -28,6 +34,7 @@ class XmlOutputTest extends ProphecyTestCase
     {
         $this->file = tempnam(sys_get_temp_dir(), 'xml');
         $this->cli = $this->prophesize(CLImate::class);
+        $this->result = $this->prophesize(Result::class);
         $this->xmlOutput = new XmlOutput($this->cli->reveal(), $this->file);
     }
 
@@ -36,16 +43,35 @@ class XmlOutputTest extends ProphecyTestCase
      */
     public function itShouldGenerateValidXml()
     {
-        $this->xmlOutput->write('MyClass.php', 122, 'if ($test) {');
-        $this->xmlOutput->write('MyClass.php', 132, '$test ? "Yes" : "No"');
-        $this->xmlOutput->write('MyOtherClass.php', 12, 'if ($test !== false) {');
-        $this->xmlOutput->flush();
+        $this->result->getAssumptions()->shouldBeCalled()->willReturn([
+            [
+                'file' => 'MyClass.php',
+                'line' => 122,
+                'message' => 'if ($test) {'
+            ],
+            [
+                'file' => 'MyClass.php',
+                'line' => 132,
+                'message' => '$test ? "Yes" : "No"'
+            ],
+            [
+                'file' => 'MyOtherClass.php',
+                'line' => 12,
+                'message' => 'if ($test !== false) {'
+            ]
+        ]);
+
+        $this->result->getAssumptionsCount()->shouldBeCalled()->willReturn(3);
+        $this->result->getPercentage()->shouldBeCalled()->willReturn(60);
+        $this->result->getBoolExpressionsCount()->shouldBeCalled()->willReturn(5);
+
+        $this->xmlOutput->output($this->result->reveal());
 
         $version = Cli::VERSION;
 
         $expected = <<<XML
 <?xml version="1.0"?>
-<phpa version="{$version}" warnings="3">
+<phpa version="{$version}" assumptions="3" bool-expressions="5" percentage="60">
     <files>
         <file name="MyClass.php">
             <line number="122" message="if (\$test) {" />

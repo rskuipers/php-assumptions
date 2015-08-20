@@ -5,11 +5,7 @@ namespace PhpAssumptions\Output;
 interface OutputInterface
 {
     /**
-     * @param string $file
-     * @param string $line
-     * @param string $message
+     * @param Result $result
      */
-    public function write($file, $line, $message);
-
-    public function flush();
+    public function output(Result $result);
 }

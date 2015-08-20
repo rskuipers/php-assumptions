@@ -4,6 +4,7 @@ namespace PhpAssumptions;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Stmt;
 
 class Detector
 {
@@ -13,27 +14,68 @@ class Detector
      */
     public function scan(Node $node)
     {
-        if ($node instanceof Expr\BinaryOp\NotIdentical || $node instanceof Expr\BinaryOp\NotEqual
-            || $node instanceof Expr\BinaryOp\Equal
-        ) {
-            if ($this->bidirectionalCheck($node, Expr\Variable::class, Expr\ConstFetch::class)) {
-                return true;
-            }
-
-            if (!$node instanceof Expr\BinaryOp\NotIdentical
-                && $this->bidirectionalCheck($node, Expr\Variable::class, Node\Scalar::class)
-            ) {
-                return true;
-            }
-        }
-
-        if (($node instanceof Expr\BooleanNot && $node->expr instanceof Expr\Variable)
-            || property_exists($node, 'cond') && $node->cond instanceof Expr\Variable
+        if (($node instanceof Expr\BinaryOp\BooleanOr || $node instanceof Expr\BinaryOp\BooleanAnd)
+            && $this->bidirectionalCheck($node, Expr\Variable::class, Expr\BinaryOp::class)
         ) {
             return true;
         }
 
+        if ($node instanceof Expr\BinaryOp\Equal || $node instanceof Expr\BinaryOp\NotEqual
+            || $node instanceof Expr\BinaryOp\NotIdentical
+        ) {
+            return true;
+        }
+
+        if ($node instanceof Expr\BooleanNot && $node->expr instanceof Expr\Variable) {
+            return true;
+        }
+
+        if ($node instanceof Expr\Ternary || $node instanceof Stmt\If_
+            || $node instanceof Stmt\ElseIf_ || $node instanceof Stmt\While_
+            || $node instanceof Stmt\For_
+        ) {
+            if ($node->cond instanceof Expr\Variable) {
+                return true;
+            }
+
+            if (is_array($node->cond)) {
+                foreach ($node->cond as $condition) {
+                    if ($condition instanceof Expr\Variable) {
+                        return true;
+                    }
+                }
+            }
+        }
+
         return false;
+    }
+
+    /**
+     * @param Node $node
+     * @return bool
+     */
+    public function isBoolExpression(Node $node)
+    {
+        if ($node instanceof Expr\Ternary || $node instanceof Stmt\If_
+            || $node instanceof Stmt\ElseIf_ || $node instanceof Stmt\While_
+            || $node instanceof Stmt\For_
+        ) {
+            if ($node->cond instanceof Expr\Variable) {
+                return true;
+            }
+
+            if (is_array($node->cond)) {
+                foreach ($node->cond as $condition) {
+                    if ($condition instanceof Expr\Variable) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return $node instanceof Expr\BinaryOp || $node instanceof Expr\BinaryOp\Identical
+            || $node instanceof Expr\BinaryOp\NotIdentical || $node instanceof Expr\BinaryOp\Equal
+            || $node instanceof Expr\BinaryOp\NotEqual || $node instanceof Expr\Instanceof_;
     }
 
     /**

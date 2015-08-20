@@ -91,8 +91,8 @@ class Cli
             }
         }
 
-        $analyser->analyse($targets);
+        $result = $analyser->analyse($targets);
 
-        $output->flush();
+        $output->output($result);
     }
 }

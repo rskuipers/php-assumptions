@@ -12,11 +12,6 @@ class PrettyOutput implements OutputInterface
     private $cli;
 
     /**
-     * @var array
-     */
-    private $table = [];
-
-    /**
      * @param CLImate $cli
      */
     public function __construct(CLImate $cli)
@@ -25,25 +20,19 @@ class PrettyOutput implements OutputInterface
     }
 
     /**
-     * @param string $file
-     * @param string $line
-     * @param string $message
+     * @param Result $result
      */
-    public function write($file, $line, $message)
+    public function output(Result $result)
     {
-        $this->table[] = [
-            'file' => $file,
-            'line' => $line,
-            'message' => $message,
-        ];
-    }
-
-    public function flush()
-    {
-        if (count($this->table) > 0) {
-            $this->cli->table($this->table)->br();
+        if ($result->getAssumptionsCount() > 0) {
+            $this->cli->table($result->getAssumptions())->br();
         }
 
-        $this->cli->out('Total warnings: ' . count($this->table));
+        $this->cli->out(sprintf(
+            '%d out of %d boolean expressions are assumptions (%d%%)',
+            $result->getAssumptionsCount(),
+            $result->getBoolExpressionsCount(),
+            $result->getPercentage()
+        ));
     }
 }

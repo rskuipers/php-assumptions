@@ -16,11 +16,6 @@ class NodeVisitor extends NodeVisitorAbstract
     private $analyser;
 
     /**
-     * @var string
-     */
-    private $currentFile;
-
-    /**
      * @var PrettyPrinterAbstract
      */
     private $prettyPrinter;
@@ -46,10 +41,14 @@ class NodeVisitor extends NodeVisitorAbstract
      * @param Node $node
      * @return false|null|Node|\PhpParser\Node[]|void
      */
-    public function leaveNode(Node $node)
+    public function enterNode(Node $node)
     {
+        if ($this->detector->isBoolExpression($node)) {
+            $this->analyser->foundBoolExpression();
+        }
+
         if ($this->detector->scan($node)) {
-            $this->analyser->found(
+            $this->analyser->foundAssumption(
                 $node->getLine(),
                 explode("\n", $this->prettyPrinter->prettyPrint([$node]))[0]
             );

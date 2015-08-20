@@ -1,6 +1,6 @@
 <?php
 
-namespace unit\PhpAssumptions;
+namespace tests\PhpAssumptions;
 
 use PhpAssumptions\Analyser;
 use PhpAssumptions\Output\OutputInterface;

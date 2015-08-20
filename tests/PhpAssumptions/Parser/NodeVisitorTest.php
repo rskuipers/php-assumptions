@@ -1,6 +1,6 @@
 <?php
 
-namespace unit\PhpAssumptions\Parser;
+namespace tests\PhpAssumptions\Parser;
 
 use PhpAssumptions\Analyser;
 use PhpAssumptions\Detector;
@@ -57,12 +57,15 @@ class NodeVisitorTest extends ProphecyTestCase
     {
         $this->node->getLine()->shouldBeCalled()->willReturn(120);
 
-        $this->prettyPrinter->prettyPrint([$this->node])->shouldBeCalled()->willReturn('Weak assumption');
+        $this->prettyPrinter->prettyPrint([$this->node])->shouldBeCalled()->willReturn('$test');
 
         $this->detector->scan($this->node)->shouldBeCalled()->willReturn(true);
-        $this->analyser->found(120, 'Weak assumption')->shouldBeCalled();
+        $this->detector->isBoolExpression($this->node)->shouldBeCalled()->willReturn(true);
 
-        $this->nodeVisitor->leaveNode($this->node->reveal());
+        $this->analyser->foundAssumption(120, '$test')->shouldBeCalled();
+        $this->analyser->foundBoolExpression()->shouldBeCalled();
+
+        $this->nodeVisitor->enterNode($this->node->reveal());
     }
 
     /**
@@ -71,7 +74,9 @@ class NodeVisitorTest extends ProphecyTestCase
     public function itShouldCallScanAndNotWriteOnFailure()
     {
         $this->detector->scan($this->node)->shouldBeCalled()->willReturn(false);
-        $this->analyser->found(Argument::any(), Argument::any(), Argument::any())->shouldNotBeCalled();
-        $this->nodeVisitor->leaveNode($this->node->reveal());
+        $this->detector->isBoolExpression($this->node)->shouldBeCalled()->willReturn(true);
+        $this->analyser->foundAssumption(Argument::any(), Argument::any())->shouldNotBeCalled();
+        $this->analyser->foundBoolExpression()->shouldBeCalled();
+        $this->nodeVisitor->enterNode($this->node->reveal());
     }
 }
