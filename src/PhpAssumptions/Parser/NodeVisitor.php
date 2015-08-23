@@ -2,28 +2,17 @@
 
 namespace PhpAssumptions\Parser;
 
+use PhpAssumptions\Analyser;
 use PhpAssumptions\Detector;
-use PhpAssumptions\Output\OutputInterface;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
-use PhpParser\PrettyPrinterAbstract;
 
 class NodeVisitor extends NodeVisitorAbstract
 {
     /**
-     * @var OutputInterface
+     * @var Analyser
      */
-    private $output;
-
-    /**
-     * @var string
-     */
-    private $currentFile;
-
-    /**
-     * @var PrettyPrinterAbstract
-     */
-    private $prettyPrinter;
+    private $analyser;
 
     /**
      * @var Detector
@@ -31,14 +20,12 @@ class NodeVisitor extends NodeVisitorAbstract
     private $detector;
 
     /**
-     * @param OutputInterface $output
-     * @param PrettyPrinterAbstract $prettyPrinter
+     * @param Analyser $analyser
      * @param Detector $detector
      */
-    public function __construct(OutputInterface $output, PrettyPrinterAbstract $prettyPrinter, Detector $detector)
+    public function __construct(Analyser $analyser, Detector $detector)
     {
-        $this->prettyPrinter = $prettyPrinter;
-        $this->output = $output;
+        $this->analyser = $analyser;
         $this->detector = $detector;
     }
 
@@ -46,22 +33,14 @@ class NodeVisitor extends NodeVisitorAbstract
      * @param Node $node
      * @return false|null|Node|\PhpParser\Node[]|void
      */
-    public function leaveNode(Node $node)
+    public function enterNode(Node $node)
     {
-        if ($this->detector->scan($node)) {
-            $this->output->write(
-                $this->currentFile,
-                $node->getLine(),
-                explode("\n", $this->prettyPrinter->prettyPrint([$node]))[0]
-            );
+        if ($this->detector->isBoolExpression($node)) {
+            $this->analyser->foundBoolExpression();
         }
-    }
 
-    /**
-     * @param string $currentFile
-     */
-    public function setCurrentFile($currentFile)
-    {
-        $this->currentFile = $currentFile;
+        if ($this->detector->scan($node)) {
+            $this->analyser->foundAssumption($node->getLine());
+        }
     }
 }

@@ -9,7 +9,6 @@ use PhpAssumptions\Parser\NodeVisitor;
 use PhpParser\Lexer;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
-use PhpParser\PrettyPrinter\Standard;
 
 class Cli
 {
@@ -66,11 +65,14 @@ class Cli
                 break;
         }
 
+        $nodeTraverser = new NodeTraverser();
+
         $analyser = new Analyser(
             new Parser(new Lexer()),
-            new NodeVisitor($output, new Standard(), new Detector()),
-            new NodeTraverser()
+            $nodeTraverser
         );
+
+        $nodeTraverser->addVisitor(new NodeVisitor($analyser, new Detector()));
 
         $target = $this->cli->arguments->get('path');
         $targets = [];
@@ -87,8 +89,8 @@ class Cli
             }
         }
 
-        $analyser->analyse($targets);
+        $result = $analyser->analyse($targets);
 
-        $output->flush();
+        $output->output($result);
     }
 }

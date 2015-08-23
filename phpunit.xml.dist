@@ -11,11 +11,8 @@
     </filter>
 
     <testsuites>
-        <testsuite name="unit">
-            <directory>tests/unit/</directory>
-        </testsuite>
-        <testsuite name="integration">
-            <directory>tests/integration/</directory>
+        <testsuite name="default">
+            <directory>tests/</directory>
         </testsuite>
     </testsuites>
 

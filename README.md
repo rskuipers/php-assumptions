@@ -12,7 +12,7 @@ $ composer require --dev rskuipers/php-assumptions
 PHP Assumptions is the result of a proof of concept inspired by the "[From assumptions to assertions](http://rskuipers.com/entry/from-assumptions-to-assertions)" blog post.
 It's a static code analysis tool doing checks for weak assumptions.
 
-This is an example of a **weak assumption**:
+This is an example of an **assumption**:
 
 ```php
 if ($user !== null) {
@@ -23,10 +23,16 @@ if ($user !== null) {
 Running `bin/phpa` on this file would yield the following output:
 
 ```
-example.php:3: if ($user !== null) {
+----------------------------------------
+| file        | line | message         |
+========================================
+| .\test2.php | 3    | $user !== null; |
+----------------------------------------
+
+1 out of 1 boolean expressions are assumptions (100%)
 ```
 
-This is an example of a **strong assertion**:
+This is an example of an **assertion**:
 
 ```php
 if ($user instanceof User) {

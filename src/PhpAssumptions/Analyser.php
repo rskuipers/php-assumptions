@@ -2,7 +2,7 @@
 
 namespace PhpAssumptions;
 
-use PhpAssumptions\Parser\NodeVisitor;
+use PhpAssumptions\Output\Result;
 use PhpParser\Node;
 use PhpParser\NodeTraverserInterface;
 use PhpParser\ParserAbstract;
@@ -20,34 +20,70 @@ class Analyser
     private $traverser;
 
     /**
-     * @var NodeVisitor
+     * @var string
      */
-    private $nodeVisitor;
+    private $currentFilePath;
+
+    /**
+     * @var array
+     */
+    private $currentFile = [];
+
+    /**
+     * @var Result
+     */
+    private $result;
 
     /**
      * @param ParserAbstract $parser
-     * @param NodeVisitor $nodeVisitor
      * @param NodeTraverserInterface $nodeTraverser
      */
-    public function __construct(ParserAbstract $parser, NodeVisitor $nodeVisitor, NodeTraverserInterface $nodeTraverser)
-    {
+    public function __construct(
+        ParserAbstract $parser,
+        NodeTraverserInterface $nodeTraverser
+    ) {
         $this->parser = $parser;
-        $this->nodeVisitor = $nodeVisitor;
         $this->traverser = $nodeTraverser;
-        $this->traverser->addVisitor($this->nodeVisitor);
+        $this->result = new Result();
     }
 
     /**
      * @param array $files
+     * @return Result
      */
     public function analyse(array $files)
     {
         foreach ($files as $file) {
-            $this->nodeVisitor->setCurrentFile($file);
+            $this->currentFilePath = $file;
+            $this->currentFile = [];
             $statements = $this->parser->parse(file_get_contents($file));
             if (is_array($statements) || $statements instanceof Node) {
                 $this->traverser->traverse($statements);
             }
         }
+
+        return $this->result;
+    }
+
+    /**
+     * @param int $line
+     */
+    public function foundAssumption($line)
+    {
+        $this->result->addAssumption($this->currentFilePath, $line, $this->readLine($line));
+    }
+
+    public function foundBoolExpression()
+    {
+        $this->result->increaseBoolExpressionsCount();
+    }
+
+    private function readLine($line)
+    {
+        if (count($this->currentFile) === 0) {
+            $this->currentFile = file($this->currentFilePath);
+        }
+
+        return trim($this->currentFile[$line - 1]);
     }
 }

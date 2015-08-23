@@ -48,38 +48,38 @@ class XmlOutput implements OutputInterface
     }
 
     /**
-     * @param string $file
-     * @param string $line
-     * @param string $message
+     * @param Result $result
      */
-    public function write($file, $line, $message)
+    public function output(Result $result)
     {
-        $fileElements = $this->xpath->query('/phpa/files/file[@name="' . $file . '"]');
+        $assumptions = $result->getAssumptions();
 
-        if ($fileElements->length === 0) {
-            $files = $this->xpath->query('/phpa/files')->item(0);
-            $fileElement = $this->document->createElement('file');
-            $fileElement->setAttribute('name', $file);
-            $files->appendChild($fileElement);
-        } else {
-            $fileElement = $fileElements->item(0);
+        foreach ($assumptions as $assumption) {
+            $fileElements = $this->xpath->query('/phpa/files/file[@name="' . $assumption['file'] . '"]');
+
+            if ($fileElements->length === 0) {
+                $files = $this->xpath->query('/phpa/files')->item(0);
+                $fileElement = $this->document->createElement('file');
+                $fileElement->setAttribute('name', $assumption['file']);
+                $files->appendChild($fileElement);
+            } else {
+                $fileElement = $fileElements->item(0);
+            }
+
+            $lineElement = $this->document->createElement('line');
+            $lineElement->setAttribute('number', $assumption['line']);
+            $lineElement->setAttribute('message', $assumption['message']);
+            $fileElement->appendChild($lineElement);
         }
 
-        $lineElement = $this->document->createElement('line');
-        $lineElement->setAttribute('number', $line);
-        $lineElement->setAttribute('message', $message);
-        $fileElement->appendChild($lineElement);
-    }
-
-    public function flush()
-    {
-        $totalWarnings = $this->xpath->query('/phpa/files/file/line')->length;
-        $this->document->documentElement->setAttribute('warnings', $totalWarnings);
+        $this->document->documentElement->setAttribute('assumptions', $result->getAssumptionsCount());
+        $this->document->documentElement->setAttribute('bool-expressions', $result->getBoolExpressionsCount());
+        $this->document->documentElement->setAttribute('percentage', $result->getPercentage());
 
         $this->document->preserveWhiteSpace = false;
         $this->document->formatOutput = true;
         $this->document->save($this->file);
 
-        $this->cli->out(sprintf('Written %d warning(s) to file %s', $totalWarnings, $this->file));
+        $this->cli->out(sprintf('Written %d assumption(s) to file %s', $result->getAssumptionsCount(), $this->file));
     }
 }

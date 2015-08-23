@@ -1,9 +1,9 @@
 <?php
 
-namespace unit\PhpAssumptions;
+namespace tests\PhpAssumptions;
 
 use PhpAssumptions\Analyser;
-use PhpAssumptions\Parser\NodeVisitor;
+use PhpAssumptions\Output\OutputInterface;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
@@ -18,9 +18,9 @@ class AnalyserTest extends ProphecyTestCase
     private $parser;
 
     /**
-     * @var NodeVisitor
+     * @var OutputInterface
      */
-    private $nodeVisitor;
+    private $output;
 
     /**
      * @var NodeTraverser
@@ -41,13 +41,12 @@ class AnalyserTest extends ProphecyTestCase
     {
         $this->node = $this->prophesize(Node::class);
         $this->parser = $this->prophesize(Parser::class);
-        $this->nodeVisitor = $this->prophesize(NodeVisitor::class);
+        $this->output = $this->prophesize(OutputInterface::class);
         $this->nodeTraverser = $this->prophesize(NodeTraverser::class);
-        $this->nodeTraverser->addVisitor($this->nodeVisitor)->shouldBeCalled();
         $this->analyser = new Analyser(
             $this->parser->reveal(),
-            $this->nodeVisitor->reveal(),
-            $this->nodeTraverser->reveal()
+            $this->nodeTraverser->reveal(),
+            $this->output->reveal()
         );
     }
 
@@ -58,8 +57,6 @@ class AnalyserTest extends ProphecyTestCase
     {
         $files = [fixture('MyClass.php')];
         $nodes = [$this->node];
-
-        $this->nodeVisitor->setCurrentFile($files[0])->shouldBeCalled();
 
         $this->parser->parse(Argument::type('string'))->shouldBeCalled()->willReturn($nodes);
 
