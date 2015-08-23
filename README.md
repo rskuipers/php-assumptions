@@ -26,7 +26,7 @@ Running `bin/phpa` on this file would yield the following output:
 ----------------------------------------
 | file        | line | message         |
 ========================================
-| .\test2.php | 3    | $user !== null; |
+| example.php | 3    | $user !== null; |
 ----------------------------------------
 
 1 out of 1 boolean expressions are assumptions (100%)
