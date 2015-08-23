@@ -23,11 +23,6 @@ class NodeVisitorTest extends ProphecyTestCase
     private $analyser;
 
     /**
-     * @var Standard
-     */
-    private $prettyPrinter;
-
-    /**
      * @var Detector
      */
     private $detector;
@@ -40,12 +35,10 @@ class NodeVisitorTest extends ProphecyTestCase
     public function setUp()
     {
         $this->analyser = $this->prophesize(Analyser::class);
-        $this->prettyPrinter = $this->prophesize(Standard::class);
         $this->detector = $this->prophesize(Detector::class);
         $this->node = $this->prophesize(Node::class);
         $this->nodeVisitor = new NodeVisitor(
             $this->analyser->reveal(),
-            $this->prettyPrinter->reveal(),
             $this->detector->reveal()
         );
     }
@@ -57,12 +50,10 @@ class NodeVisitorTest extends ProphecyTestCase
     {
         $this->node->getLine()->shouldBeCalled()->willReturn(120);
 
-        $this->prettyPrinter->prettyPrint([$this->node])->shouldBeCalled()->willReturn('$test');
-
         $this->detector->scan($this->node)->shouldBeCalled()->willReturn(true);
         $this->detector->isBoolExpression($this->node)->shouldBeCalled()->willReturn(true);
 
-        $this->analyser->foundAssumption(120, '$test')->shouldBeCalled();
+        $this->analyser->foundAssumption(120)->shouldBeCalled();
         $this->analyser->foundBoolExpression()->shouldBeCalled();
 
         $this->nodeVisitor->enterNode($this->node->reveal());

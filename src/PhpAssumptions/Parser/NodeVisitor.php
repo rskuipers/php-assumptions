@@ -6,7 +6,6 @@ use PhpAssumptions\Analyser;
 use PhpAssumptions\Detector;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
-use PhpParser\PrettyPrinterAbstract;
 
 class NodeVisitor extends NodeVisitorAbstract
 {
@@ -16,23 +15,16 @@ class NodeVisitor extends NodeVisitorAbstract
     private $analyser;
 
     /**
-     * @var PrettyPrinterAbstract
-     */
-    private $prettyPrinter;
-
-    /**
      * @var Detector
      */
     private $detector;
 
     /**
      * @param Analyser $analyser
-     * @param PrettyPrinterAbstract $prettyPrinter
      * @param Detector $detector
      */
-    public function __construct(Analyser $analyser, PrettyPrinterAbstract $prettyPrinter, Detector $detector)
+    public function __construct(Analyser $analyser, Detector $detector)
     {
-        $this->prettyPrinter = $prettyPrinter;
         $this->analyser = $analyser;
         $this->detector = $detector;
     }
@@ -48,10 +40,7 @@ class NodeVisitor extends NodeVisitorAbstract
         }
 
         if ($this->detector->scan($node)) {
-            $this->analyser->foundAssumption(
-                $node->getLine(),
-                explode("\n", $this->prettyPrinter->prettyPrint([$node]))[0]
-            );
+            $this->analyser->foundAssumption($node->getLine());
         }
     }
 }

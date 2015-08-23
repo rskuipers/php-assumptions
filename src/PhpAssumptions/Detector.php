@@ -39,10 +39,15 @@ class Detector
      */
     public function isBoolExpression(Node $node)
     {
-        return $this->isVariableExpression($node) || $node instanceof Expr\BinaryOp
-            || $node instanceof Expr\BinaryOp\Identical || $node instanceof Expr\BinaryOp\NotIdentical
-            || $node instanceof Expr\BinaryOp\Equal || $node instanceof Expr\BinaryOp\NotEqual
-            || $node instanceof Expr\Instanceof_;
+        if ($node instanceof Expr\Ternary || $node instanceof Stmt\If_
+            || $node instanceof Stmt\ElseIf_ || $node instanceof Stmt\While_
+            || $node instanceof Expr\BinaryOp\BooleanAnd || $node instanceof Expr\BinaryOp\BooleanOr
+            || $node instanceof Stmt\For_
+        ) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

@@ -54,6 +54,10 @@ class Result
      */
     public function getPercentage()
     {
+        if ($this->getBoolExpressionsCount() === 0) {
+            return 0;
+        }
+
         return round($this->getAssumptionsCount() / $this->getBoolExpressionsCount() * 100);
     }
 

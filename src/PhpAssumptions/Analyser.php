@@ -22,7 +22,12 @@ class Analyser
     /**
      * @var string
      */
-    private $currentFile;
+    private $currentFilePath;
+
+    /**
+     * @var array
+     */
+    private $currentFile = [];
 
     /**
      * @var Result
@@ -49,7 +54,8 @@ class Analyser
     public function analyse(array $files)
     {
         foreach ($files as $file) {
-            $this->currentFile = $file;
+            $this->currentFilePath = $file;
+            $this->currentFile = [];
             $statements = $this->parser->parse(file_get_contents($file));
             if (is_array($statements) || $statements instanceof Node) {
                 $this->traverser->traverse($statements);
@@ -61,15 +67,23 @@ class Analyser
 
     /**
      * @param int $line
-     * @param string $message
      */
-    public function foundAssumption($line, $message)
+    public function foundAssumption($line)
     {
-        $this->result->addAssumption($this->currentFile, $line, $message);
+        $this->result->addAssumption($this->currentFilePath, $line, $this->readLine($line));
     }
 
     public function foundBoolExpression()
     {
         $this->result->increaseBoolExpressionsCount();
+    }
+
+    private function readLine($line)
+    {
+        if (count($this->currentFile) === 0) {
+            $this->currentFile = file($this->currentFilePath);
+        }
+
+        return trim($this->currentFile[$line - 1]);
     }
 }
