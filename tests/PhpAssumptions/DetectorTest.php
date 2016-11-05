@@ -3,8 +3,7 @@
 namespace tests\PhpAssumptions;
 
 use PhpAssumptions\Detector;
-use PhpParser\Lexer;
-use PhpParser\Parser;
+use PhpParser\ParserFactory;
 
 class NodeVisitorTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,7 +19,7 @@ class NodeVisitorTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->parser = new Parser(new Lexer());
+        $this->parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
         $this->detector = new Detector();
     }
 

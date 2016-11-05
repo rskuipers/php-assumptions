@@ -6,7 +6,7 @@ use PhpAssumptions\Analyser;
 use PhpAssumptions\Output\OutputInterface;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
-use PhpParser\Parser;
+use PhpParser\ParserFactory;
 use Prophecy\Argument;
 
 class AnalyserTest extends \PHPUnit_Framework_TestCase
@@ -39,11 +39,11 @@ class AnalyserTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->node = $this->prophesize(Node::class);
-        $this->parser = $this->prophesize(Parser::class);
+        $this->parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
         $this->output = $this->prophesize(OutputInterface::class);
         $this->nodeTraverser = $this->prophesize(NodeTraverser::class);
         $this->analyser = new Analyser(
-            $this->parser->reveal(),
+            $this->parser,
             $this->nodeTraverser->reveal(),
             $this->output->reveal()
         );
@@ -57,7 +57,8 @@ class AnalyserTest extends \PHPUnit_Framework_TestCase
         $files = [fixture('MyClass.php')];
         $nodes = [$this->node];
 
-        $this->parser->parse(Argument::type('string'))->shouldBeCalled()->willReturn($nodes);
+        $parseRes = $this->parser->parse(Argument::type('string'));
+        //$this->parser->parse(Argument::type('string'))->shouldBeCalled()->willReturn($nodes);
 
         $this->nodeTraverser->traverse($nodes)->shouldBeCalled();
 

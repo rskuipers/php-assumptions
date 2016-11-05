@@ -14,7 +14,7 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^5.6",
-        "henrikbjorn/phpspec-code-coverage": "^1.0"
+        "phpspec/prophecy": "~1.0"
     },
     "autoload": {
         "psr-4": {
