@@ -16,7 +16,7 @@ class Result
 
     /**
      * @param string $file
-     * @param int $line
+     * @param int    $line
      * @param string $message
      */
     public function addAssumption($file, $line, $message)

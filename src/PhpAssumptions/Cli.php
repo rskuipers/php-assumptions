@@ -18,7 +18,8 @@ class Cli
      */
     private $cli;
 
-    private function createParser() {
+    private function createParser()
+    {
         $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
         return $parser;
     }
@@ -26,7 +27,8 @@ class Cli
     public function __construct(CLImate $cli)
     {
         $this->cli = $cli;
-        $this->cli->arguments->add([
+        $this->cli->arguments->add(
+            [
             'path' => [
                 'description' => 'The path to analyse',
                 'required' => true,
@@ -43,7 +45,8 @@ class Cli
                 'description' => 'Output file',
                 'defaultValue' => 'phpa.xml',
             ],
-        ]);
+            ]
+        );
         $this->parser = self::createParser();
     }
 

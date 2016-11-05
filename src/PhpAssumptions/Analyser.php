@@ -35,7 +35,7 @@ class Analyser
     private $result;
 
     /**
-     * @param ParserAbstract $parser
+     * @param ParserAbstract         $parser
      * @param NodeTraverserInterface $nodeTraverser
      */
     public function __construct(

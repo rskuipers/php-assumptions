@@ -81,7 +81,7 @@ class Detector
     }
 
     /**
-     * @param Expr $condition
+     * @param Expr   $condition
      * @param string $left
      * @param string $right
      * @return bool
