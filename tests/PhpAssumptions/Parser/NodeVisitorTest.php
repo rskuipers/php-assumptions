@@ -8,9 +8,8 @@ use PhpAssumptions\Parser\NodeVisitor;
 use PhpParser\Node;
 use PhpParser\PrettyPrinter\Standard;
 use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTestCase;
 
-class NodeVisitorTest extends ProphecyTestCase
+class NodeVisitorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var NodeVisitor

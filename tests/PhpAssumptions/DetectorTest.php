@@ -5,9 +5,8 @@ namespace tests\PhpAssumptions;
 use PhpAssumptions\Detector;
 use PhpParser\Lexer;
 use PhpParser\Parser;
-use Prophecy\PhpUnit\ProphecyTestCase;
 
-class NodeVisitorTest extends ProphecyTestCase
+class NodeVisitorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Parser

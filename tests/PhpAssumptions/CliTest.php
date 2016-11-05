@@ -6,9 +6,8 @@ use League\CLImate\Argument\Manager;
 use League\CLImate\CLImate;
 use PhpAssumptions\Cli;
 use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTestCase;
 
-class CliTest extends ProphecyTestCase
+class CliTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Cli

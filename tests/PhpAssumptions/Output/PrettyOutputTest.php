@@ -6,9 +6,8 @@ use League\CLImate\CLImate;
 use PhpAssumptions\Output\PrettyOutput;
 use PhpAssumptions\Output\Result;
 use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTestCase;
 
-class PrettyOutputTest extends ProphecyTestCase
+class PrettyOutputTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var PrettyOutput

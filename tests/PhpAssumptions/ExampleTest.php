@@ -9,9 +9,8 @@ use PhpParser\Lexer;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
 use PhpParser\PrettyPrinter\Standard;
-use Prophecy\PhpUnit\ProphecyTestCase;
 
-class ExampleTest extends ProphecyTestCase
+class ExampleTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Analyser

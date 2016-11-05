@@ -8,9 +8,8 @@ use PhpParser\Node;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
 use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTestCase;
 
-class AnalyserTest extends ProphecyTestCase
+class AnalyserTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Parser
