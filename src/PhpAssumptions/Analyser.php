@@ -5,7 +5,7 @@ namespace PhpAssumptions;
 use PhpAssumptions\Output\Result;
 use PhpParser\Node;
 use PhpParser\NodeTraverserInterface;
-use PhpParser\ParserAbstract;
+use PhpParser\Parser\Multiple;
 
 class Analyser
 {
@@ -39,7 +39,7 @@ class Analyser
      * @param NodeTraverserInterface $nodeTraverser
      */
     public function __construct(
-        ParserAbstract $parser,
+        Multiple $parser,
         NodeTraverserInterface $nodeTraverser
     ) {
         $this->parser = $parser;
