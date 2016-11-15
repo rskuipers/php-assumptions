@@ -1,6 +1,9 @@
 # CHANGELOG
 List of changes since the very first version :)
 
+## 0.5.0 - 2016-11-15
+- Add PHP 7.0 support and drop 5.5 support
+
 ## 0.4.0 - 2015-08-23
 - Add metrics: "x out of y bool expressions are assumptions (z%)"
 
