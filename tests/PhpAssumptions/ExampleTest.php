@@ -5,13 +5,11 @@ namespace tests;
 use PhpAssumptions\Analyser;
 use PhpAssumptions\Detector;
 use PhpAssumptions\Parser\NodeVisitor;
-use PhpParser\Lexer;
 use PhpParser\NodeTraverser;
-use PhpParser\Parser;
+use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
-use Prophecy\PhpUnit\ProphecyTestCase;
 
-class ExampleTest extends ProphecyTestCase
+class ExampleTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Analyser
@@ -21,7 +19,7 @@ class ExampleTest extends ProphecyTestCase
     public function setUp()
     {
         $nodeTraverser = new NodeTraverser();
-        $this->analyser = new Analyser(new Parser(new Lexer()), $nodeTraverser);
+        $this->analyser = new Analyser((new ParserFactory)->create(ParserFactory::PREFER_PHP7), $nodeTraverser);
         $nodeTraverser->addVisitor(new NodeVisitor($this->analyser, new Detector()));
     }
 

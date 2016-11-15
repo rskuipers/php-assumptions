@@ -6,9 +6,8 @@ use League\CLImate\CLImate;
 use PhpAssumptions\Output\PrettyOutput;
 use PhpAssumptions\Output\XmlOutput;
 use PhpAssumptions\Parser\NodeVisitor;
-use PhpParser\Lexer;
 use PhpParser\NodeTraverser;
-use PhpParser\Parser;
+use PhpParser\ParserFactory;
 
 class Cli
 {
@@ -19,10 +18,17 @@ class Cli
      */
     private $cli;
 
+    private function createParser()
+    {
+        $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
+        return $parser;
+    }
+
     public function __construct(CLImate $cli)
     {
         $this->cli = $cli;
-        $this->cli->arguments->add([
+        $this->cli->arguments->add(
+            [
             'path' => [
                 'description' => 'The path to analyse',
                 'required' => true,
@@ -39,7 +45,9 @@ class Cli
                 'description' => 'Output file',
                 'defaultValue' => 'phpa.xml',
             ],
-        ]);
+            ]
+        );
+        $this->parser = self::createParser();
     }
 
     /**
@@ -68,7 +76,7 @@ class Cli
         $nodeTraverser = new NodeTraverser();
 
         $analyser = new Analyser(
-            new Parser(new Lexer()),
+            $this->parser,
             $nodeTraverser
         );
 

@@ -5,10 +5,9 @@ namespace tests\PhpAssumptions\Output;
 use League\CLImate\CLImate;
 use PhpAssumptions\Cli;
 use PhpAssumptions\Output\Result;
-use Prophecy\PhpUnit\ProphecyTestCase;
 use PhpAssumptions\Output\XmlOutput;
 
-class XmlOutputTest extends ProphecyTestCase
+class XmlOutputTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var XmlOutput

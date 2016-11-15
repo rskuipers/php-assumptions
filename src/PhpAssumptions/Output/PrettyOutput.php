@@ -28,11 +28,13 @@ class PrettyOutput implements OutputInterface
             $this->cli->table($result->getAssumptions())->br();
         }
 
-        $this->cli->out(sprintf(
-            '%d out of %d boolean expressions are assumptions (%d%%)',
-            $result->getAssumptionsCount(),
-            $result->getBoolExpressionsCount(),
-            $result->getPercentage()
-        ));
+        $this->cli->out(
+            sprintf(
+                '%d out of %d boolean expressions are assumptions (%d%%)',
+                $result->getAssumptionsCount(),
+                $result->getBoolExpressionsCount(),
+                $result->getPercentage()
+            )
+        );
     }
 }

@@ -3,11 +3,9 @@
 namespace tests\PhpAssumptions;
 
 use PhpAssumptions\Detector;
-use PhpParser\Lexer;
-use PhpParser\Parser;
-use Prophecy\PhpUnit\ProphecyTestCase;
+use PhpParser\ParserFactory;
 
-class NodeVisitorTest extends ProphecyTestCase
+class NodeVisitorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Parser
@@ -21,7 +19,7 @@ class NodeVisitorTest extends ProphecyTestCase
 
     public function setUp()
     {
-        $this->parser = new Parser(new Lexer());
+        $this->parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
         $this->detector = new Detector();
     }
 

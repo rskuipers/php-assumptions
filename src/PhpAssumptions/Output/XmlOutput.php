@@ -29,7 +29,7 @@ class XmlOutput implements OutputInterface
 
     /**
      * @param CLImate $cli
-     * @param string $file
+     * @param string  $file
      */
     public function __construct(CLImate $cli, $file)
     {
