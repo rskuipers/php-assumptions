@@ -3,11 +3,6 @@ tools:
   php_code_sniffer:
     config:
       standard: PSR2
-build_failure_conditions:
-  - 'elements.rating(<= D).new.exists'
-  - 'issues.label("coding-style").new.exists'
-  - 'issues.severity(>= MAJOR).new.exists'
-  - 'project.metric_change("scrutinizer.test_coverage", < -0.10)'
 checks:
   php:
     code_rating: true
