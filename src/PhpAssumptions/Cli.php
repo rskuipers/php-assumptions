@@ -39,6 +39,12 @@ class Cli
                 'description' => 'Format (pretty, xml)',
                 'defaultValue' => 'pretty',
             ],
+            'exclude' => [
+                'prefix' => 'e',
+                'longPrefix' => 'exclude',
+                'description' => 'List of files/directories (separate by ",") to exclude from the analyse',
+                'defaultValue' => ''
+            ],
             'output' => [
                 'prefix' => 'o',
                 'longPrefix' => 'output',
@@ -73,32 +79,62 @@ class Cli
                 break;
         }
 
+        $excludes = $this->getPathsFromList($this->cli->arguments->get('exclude'));
+
         $nodeTraverser = new NodeTraverser();
 
         $analyser = new Analyser(
             $this->parser,
-            $nodeTraverser
+            $nodeTraverser,
+            $excludes
         );
 
         $nodeTraverser->addVisitor(new NodeVisitor($analyser, new Detector()));
 
         $target = $this->cli->arguments->get('path');
-        $targets = [];
-
-        if (is_file($target)) {
-            $targets[] = $target;
-        } else {
-            $directory = new \RecursiveDirectoryIterator($target);
-            $iterator = new \RecursiveIteratorIterator($directory);
-            $regex = new \RegexIterator($iterator, '/^.+\.php$/i', \RecursiveRegexIterator::GET_MATCH);
-
-            foreach ($regex as $file) {
-                $targets[] = $file[0];
-            }
-        }
+        $targets = $this->getPaths($target);
 
         $result = $analyser->analyse($targets);
 
         $output->output($result);
+    }
+
+    /**
+     * @param string $list
+     * @return array
+     */
+    private function getPathsFromList($list)
+    {
+        $paths = [];
+        if (strlen($list) > 0) {
+            $items = explode(',', $list);
+            foreach ($items as $item) {
+                $paths = array_merge($paths, $this->getPaths($item));
+            }
+        }
+
+        return $paths;
+    }
+
+    /**
+     * @param string $fromPath
+     * @return array
+     */
+    private function getPaths($fromPath)
+    {
+        $paths = [];
+        if (is_file($fromPath)) {
+            $paths[] = $fromPath;
+        } else {
+            $directory = new \RecursiveDirectoryIterator($fromPath);
+            $iterator = new \RecursiveIteratorIterator($directory);
+            $regex = new \RegexIterator($iterator, '/^.+\.php$/i', \RecursiveRegexIterator::GET_MATCH);
+
+            foreach ($regex as $file) {
+                $paths[] = $file[0];
+            }
+        }
+
+        return $paths;
     }
 }

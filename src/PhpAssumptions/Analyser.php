@@ -6,6 +6,7 @@ use PhpAssumptions\Output\Result;
 use PhpParser\Node;
 use PhpParser\NodeTraverserInterface;
 use PhpParser\Parser\Multiple;
+use PhpParser\ParserAbstract;
 
 class Analyser
 {
@@ -35,16 +36,24 @@ class Analyser
     private $result;
 
     /**
-     * @param ParserAbstract         $parser
-     * @param NodeTraverserInterface $nodeTraverser
+     * @var array|\string[]
+     */
+    private $excludes = [];
+
+    /**
+     * @param ParserAbstract|Multiple $parser
+     * @param NodeTraverserInterface  $nodeTraverser
+     * @param string[]                $excludes
      */
     public function __construct(
         Multiple $parser,
-        NodeTraverserInterface $nodeTraverser
+        NodeTraverserInterface $nodeTraverser,
+        $excludes = []
     ) {
         $this->parser = $parser;
         $this->traverser = $nodeTraverser;
         $this->result = new Result();
+        $this->excludes = $excludes;
     }
 
     /**
@@ -54,6 +63,9 @@ class Analyser
     public function analyse(array $files)
     {
         foreach ($files as $file) {
+            if (in_array($file, $this->excludes, true)) {
+                continue;
+            }
             $this->currentFilePath = $file;
             $this->currentFile = [];
             $statements = $this->parser->parse(file_get_contents($file));
