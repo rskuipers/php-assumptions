@@ -51,6 +51,7 @@ class CliTest extends \PHPUnit_Framework_TestCase
 
         $this->argumentManager->get('format')->shouldBeCalled()->willReturn('pretty');
         $this->argumentManager->get('path')->shouldBeCalled()->willReturn($path);
+        $this->argumentManager->get('exclude')->shouldBeCalled()->willReturn('');
 
         $this->climate->table([
             [
@@ -73,6 +74,7 @@ class CliTest extends \PHPUnit_Framework_TestCase
 
         $this->argumentManager->get('format')->shouldBeCalled()->willReturn('pretty');
         $this->argumentManager->get('path')->shouldBeCalled()->willReturn(FIXTURES_DIR);
+        $this->argumentManager->get('exclude')->shouldBeCalled()->willReturn('');
 
         // Assert that all files show up in the table
         $this->climate->table(Argument::that(function ($table) use ($files) {
@@ -92,6 +94,65 @@ class CliTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function itShouldIgnoreExcludeFile()
+    {
+        $path = fixture('MyClass.php');
+
+        $this->argumentManager->get('format')->shouldBeCalled()->willReturn('pretty');
+        $this->argumentManager->get('path')->shouldBeCalled()->willReturn($path);
+        $this->argumentManager->get('exclude')->shouldBeCalled()->willReturn(fixture('MyClass.php'));
+
+        $this->climate->table()->shouldNotBeCalled();
+        $this->climate->out('0 out of 0 boolean expressions are assumptions (0%)')->shouldBeCalled();
+
+        $this->cli->handle(['phpa', $path]);
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldIgnoreExcludeFileFromDirectory()
+    {
+        $path = fixture('MyClass.php');
+
+        $this->argumentManager->get('format')->shouldBeCalled()->willReturn('pretty');
+        $this->argumentManager->get('path')->shouldBeCalled()->willReturn(FIXTURES_DIR);
+        $this->argumentManager->get('exclude')->shouldBeCalled()->willReturn(fixture('MyOtherClass.php').','.fixture('Example.php'));
+
+        $this->climate->table([
+            [
+                'file' => $path,
+                'line' => 9,
+                'message' => 'if ($dog !== null) {',
+            ]
+        ])->shouldBeCalled()->willReturn($this->climate);
+        $this->climate->out('1 out of 2 boolean expressions are assumptions (50%)')->shouldBeCalled();
+
+        $this->cli->handle(['phpa', FIXTURES_DIR]);
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldIgnoreExcludeDirectory()
+    {
+        $files = [fixture('MyClass.php'), fixture('MyOtherClass.php'), fixture('Example.php')];
+
+        $this->argumentManager->get('format')->shouldBeCalled()->willReturn('pretty');
+        $this->argumentManager->get('path')->shouldBeCalled()->willReturn(FIXTURES_DIR);
+        $this->argumentManager->get('exclude')->shouldBeCalled()->willReturn(fixture(''));
+
+        // Assert that all files show up in the table
+        $this->climate->table()->shouldNotBeCalled();
+
+        $this->climate->out(Argument::containingString('boolean expressions are assumptions'))->shouldBeCalled();
+
+        $this->cli->handle(['phpa', FIXTURES_DIR]);
+    }
+
+    /**
+     * @test
+     */
     public function itShouldAnalyseTargetFileAndOutputXml()
     {
         $path = fixture('MyClass.php');
@@ -100,6 +161,7 @@ class CliTest extends \PHPUnit_Framework_TestCase
         $this->argumentManager->get('format')->shouldBeCalled()->willReturn('xml');
         $this->argumentManager->get('path')->shouldBeCalled()->willReturn($path);
         $this->argumentManager->get('output')->shouldBeCalled()->willReturn($output);
+        $this->argumentManager->get('exclude')->shouldBeCalled()->willReturn('');
 
         $this->climate->out('Written 1 assumption(s) to file ' . $output)->shouldBeCalled();
 

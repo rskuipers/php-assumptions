@@ -45,7 +45,7 @@ class AnalyserTest extends \PHPUnit_Framework_TestCase
         $this->analyser = new Analyser(
             $this->parser->reveal(),
             $this->nodeTraverser->reveal(),
-            $this->output->reveal()
+            [fixture('MyOtherClass.php')]
         );
     }
 
@@ -55,6 +55,22 @@ class AnalyserTest extends \PHPUnit_Framework_TestCase
     public function itShouldAnalyseAllFiles()
     {
         $files = [fixture('MyClass.php')];
+        $nodes = [$this->node];
+
+        $parseRes = $this->parser->parse(Argument::type('string'));
+        $this->parser->parse(Argument::type('string'))->shouldBeCalled()->willReturn($nodes);
+
+        $this->nodeTraverser->traverse($nodes)->shouldBeCalled();
+
+        $this->analyser->analyse($files);
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldIgnoreExcludeFiles()
+    {
+        $files = [fixture('MyClass.php'), fixture('MyOtherClass.php')];
         $nodes = [$this->node];
 
         $parseRes = $this->parser->parse(Argument::type('string'));
