@@ -33,11 +33,6 @@ class CliTest extends \PHPUnit_Framework_TestCase
         $this->climate = $this->prophesize(CLImate::class);
 
         $this->climate->arguments = $this->argumentManager->reveal();
-        $this->climate->out(Argument::containingString('PHPAssumptions analyser'))
-            ->shouldBeCalled()
-            ->willReturn($this->climate);
-
-        $this->climate->br()->shouldBeCalled();
 
         $this->cli = new Cli($this->climate->reveal());
     }
@@ -47,8 +42,11 @@ class CliTest extends \PHPUnit_Framework_TestCase
      */
     public function itShouldAnalyseTargetFile()
     {
+        $this->itShouldShowAuthor();
+
         $path = fixture('MyClass.php');
 
+        $this->argumentManager->defined('version')->shouldBeCalled()->willReturn(false);
         $this->argumentManager->get('format')->shouldBeCalled()->willReturn('pretty');
         $this->argumentManager->get('path')->shouldBeCalled()->willReturn($path);
         $this->argumentManager->get('exclude')->shouldBeCalled()->willReturn('');
@@ -70,8 +68,11 @@ class CliTest extends \PHPUnit_Framework_TestCase
      */
     public function itShouldAnalyseTargetDirectory()
     {
+        $this->itShouldShowAuthor();
+
         $files = [fixture('MyClass.php'), fixture('MyOtherClass.php'), fixture('Example.php')];
 
+        $this->argumentManager->defined('version')->shouldBeCalled()->willReturn(false);
         $this->argumentManager->get('format')->shouldBeCalled()->willReturn('pretty');
         $this->argumentManager->get('path')->shouldBeCalled()->willReturn(FIXTURES_DIR);
         $this->argumentManager->get('exclude')->shouldBeCalled()->willReturn('');
@@ -96,8 +97,11 @@ class CliTest extends \PHPUnit_Framework_TestCase
      */
     public function itShouldIgnoreExcludeFile()
     {
+        $this->itShouldShowAuthor();
+
         $path = fixture('MyClass.php');
 
+        $this->argumentManager->defined('version')->shouldBeCalled()->willReturn(false);
         $this->argumentManager->get('format')->shouldBeCalled()->willReturn('pretty');
         $this->argumentManager->get('path')->shouldBeCalled()->willReturn($path);
         $this->argumentManager->get('exclude')->shouldBeCalled()->willReturn(fixture('MyClass.php'));
@@ -113,11 +117,16 @@ class CliTest extends \PHPUnit_Framework_TestCase
      */
     public function itShouldIgnoreExcludeFileFromDirectory()
     {
+        $this->itShouldShowAuthor();
+
         $path = fixture('MyClass.php');
 
+        $this->argumentManager->defined('version')->shouldBeCalled()->willReturn(false);
         $this->argumentManager->get('format')->shouldBeCalled()->willReturn('pretty');
         $this->argumentManager->get('path')->shouldBeCalled()->willReturn(FIXTURES_DIR);
-        $this->argumentManager->get('exclude')->shouldBeCalled()->willReturn(fixture('MyOtherClass.php').','.fixture('Example.php'));
+        $this->argumentManager->get('exclude')->shouldBeCalled()->willReturn(
+            fixture('MyOtherClass.php') . ',' . fixture('Example.php')
+        );
 
         $this->climate->table([
             [
@@ -136,8 +145,9 @@ class CliTest extends \PHPUnit_Framework_TestCase
      */
     public function itShouldIgnoreExcludeDirectory()
     {
-        $files = [fixture('MyClass.php'), fixture('MyOtherClass.php'), fixture('Example.php')];
+        $this->itShouldShowAuthor();
 
+        $this->argumentManager->defined('version')->shouldBeCalled()->willReturn(false);
         $this->argumentManager->get('format')->shouldBeCalled()->willReturn('pretty');
         $this->argumentManager->get('path')->shouldBeCalled()->willReturn(FIXTURES_DIR);
         $this->argumentManager->get('exclude')->shouldBeCalled()->willReturn(fixture(''));
@@ -155,9 +165,12 @@ class CliTest extends \PHPUnit_Framework_TestCase
      */
     public function itShouldAnalyseTargetFileAndOutputXml()
     {
+        $this->itShouldShowAuthor();
+
         $path = fixture('MyClass.php');
         $output = tempnam(sys_get_temp_dir(), 'xml');
 
+        $this->argumentManager->defined('version')->shouldBeCalled()->willReturn(false);
         $this->argumentManager->get('format')->shouldBeCalled()->willReturn('xml');
         $this->argumentManager->get('path')->shouldBeCalled()->willReturn($path);
         $this->argumentManager->get('output')->shouldBeCalled()->willReturn($output);
@@ -179,5 +192,26 @@ class CliTest extends \PHPUnit_Framework_TestCase
         $args = ['phpa'];
         $this->climate->usage($args)->shouldBeCalled();
         $this->cli->handle($args);
+    }
+
+    /**
+     * @test
+     */
+    public function itShouldShowVersion()
+    {
+        $this->argumentManager->defined('version')->shouldBeCalled()->willReturn(true);
+
+        $args = ['phpa', '--version'];
+        $this->climate->out(Cli::VERSION)->shouldBeCalled();
+        $this->cli->handle($args);
+    }
+
+    private function itShouldShowAuthor()
+    {
+        $this->climate->out(Argument::containingString('PHPAssumptions analyser'))
+            ->shouldBeCalled()
+            ->willReturn($this->climate);
+
+        $this->climate->br()->shouldBeCalled();
     }
 }

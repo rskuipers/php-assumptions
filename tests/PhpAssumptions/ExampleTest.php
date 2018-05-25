@@ -7,7 +7,6 @@ use PhpAssumptions\Detector;
 use PhpAssumptions\Parser\NodeVisitor;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
-use PhpParser\PrettyPrinter\Standard;
 
 class ExampleTest extends \PHPUnit_Framework_TestCase
 {

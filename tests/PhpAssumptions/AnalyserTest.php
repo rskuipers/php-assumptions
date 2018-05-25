@@ -4,6 +4,7 @@ namespace tests\PhpAssumptions;
 
 use PhpAssumptions\Analyser;
 use PhpAssumptions\Output\OutputInterface;
+use PhpParser\Parser;
 use PhpParser\Parser\Multiple;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
@@ -57,7 +58,6 @@ class AnalyserTest extends \PHPUnit_Framework_TestCase
         $files = [fixture('MyClass.php')];
         $nodes = [$this->node];
 
-        $parseRes = $this->parser->parse(Argument::type('string'));
         $this->parser->parse(Argument::type('string'))->shouldBeCalled()->willReturn($nodes);
 
         $this->nodeTraverser->traverse($nodes)->shouldBeCalled();
@@ -73,7 +73,6 @@ class AnalyserTest extends \PHPUnit_Framework_TestCase
         $files = [fixture('MyClass.php'), fixture('MyOtherClass.php')];
         $nodes = [$this->node];
 
-        $parseRes = $this->parser->parse(Argument::type('string'));
         $this->parser->parse(Argument::type('string'))->shouldBeCalled()->willReturn($nodes);
 
         $this->nodeTraverser->traverse($nodes)->shouldBeCalled();
