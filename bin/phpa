@@ -13,4 +13,4 @@ foreach ($autoloaders as $autoloader) {
 ini_set('xdebug.max_nesting_level', 3000);
 
 $cli = new \PhpAssumptions\Cli(new \League\CLImate\CLImate());
-$cli->handle($argv);
+exit($cli->handle($argv));

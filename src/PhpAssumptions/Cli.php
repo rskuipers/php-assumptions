@@ -18,6 +18,11 @@ class Cli
      */
     private $cli;
 
+    /**
+     * @var \PhpParser\Parser
+     */
+    private $parser;
+
     private function createParser()
     {
         $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
@@ -29,28 +34,32 @@ class Cli
         $this->cli = $cli;
         $this->cli->arguments->add(
             [
-            'path' => [
-                'description' => 'The path to analyse',
-                'required' => true,
-            ],
-            'format' => [
-                'prefix' => 'f',
-                'longPrefix' => 'format',
-                'description' => 'Format (pretty, xml)',
-                'defaultValue' => 'pretty',
-            ],
-            'exclude' => [
-                'prefix' => 'e',
-                'longPrefix' => 'exclude',
-                'description' => 'List of files/directories (separate by ",") to exclude from the analyse',
-                'defaultValue' => ''
-            ],
-            'output' => [
-                'prefix' => 'o',
-                'longPrefix' => 'output',
-                'description' => 'Output file',
-                'defaultValue' => 'phpa.xml',
-            ],
+                'path' => [
+                    'description' => 'The path to analyse',
+                    'required' => false,
+                ],
+                'format' => [
+                    'prefix' => 'f',
+                    'longPrefix' => 'format',
+                    'description' => 'Format (pretty, xml)',
+                    'defaultValue' => 'pretty',
+                ],
+                'exclude' => [
+                    'prefix' => 'e',
+                    'longPrefix' => 'exclude',
+                    'description' => 'List of files/directories (separate by ",") to exclude from the analyse',
+                    'defaultValue' => ''
+                ],
+                'output' => [
+                    'prefix' => 'o',
+                    'longPrefix' => 'output',
+                    'description' => 'Output file',
+                    'defaultValue' => 'phpa.xml',
+                ],
+                'version' => [
+                    'longPrefix' => 'version',
+                    'description' => 'Show the version'
+                ],
             ]
         );
         $this->parser = self::createParser();
@@ -58,16 +67,30 @@ class Cli
 
     /**
      * @param array $args
+     * @return int
      */
     public function handle(array $args)
     {
-        $this->cli->out(sprintf('PHPAssumptions analyser v%s by @rskuipers', Cli::VERSION))->br();
-
         try {
             $this->cli->arguments->parse($args);
         } catch (\Exception $e) {
             $this->cli->usage($args);
-            return;
+            return 100;
+        }
+
+        if ($this->cli->arguments->defined('version')) {
+            $this->cli->out(Cli::VERSION);
+            return 0;
+        }
+
+        $this->cli->out(sprintf('PHPAssumptions analyser v%s by @rskuipers', Cli::VERSION))->br();
+
+        $target = $this->cli->arguments->get('path');
+
+        if (!is_string($target)) {
+            $this->cli->error('Missing target path')->br();
+            $this->cli->usage($args);
+            return 100;
         }
 
         switch ($this->cli->arguments->get('format')) {
@@ -97,6 +120,12 @@ class Cli
         $result = $analyser->analyse($targets);
 
         $output->output($result);
+
+        if ($result->getAssumptionsCount() > 0) {
+            return 110;
+        }
+
+        return 0;
     }
 
     /**
