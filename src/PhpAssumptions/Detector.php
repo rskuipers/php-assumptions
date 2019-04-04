@@ -14,6 +14,10 @@ class Detector
      */
     public function scan(Node $node)
     {
+        if (($node instanceof Stmt\Expression)) {
+            $node = $node->expr;
+        }
+
         if (($node instanceof Expr\BinaryOp\BooleanOr || $node instanceof Expr\BinaryOp\BooleanAnd)
             && $this->bidirectionalCheck($node, Expr\Variable::class, Expr\BinaryOp::class)
         ) {
