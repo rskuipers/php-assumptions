@@ -102,7 +102,7 @@ class Cli
                 break;
         }
 
-        $excludes = $this->getPathsFromList($this->cli->arguments->get('exclude'));
+        $excludes = $this->getPathsFromList((string) $this->cli->arguments->get('exclude'));
 
         $nodeTraverser = new NodeTraverser();
 
@@ -135,7 +135,7 @@ class Cli
     private function getPathsFromList($list)
     {
         $paths = [];
-        if (strlen($list) > 0) {
+        if ($list !== '') {
             $items = explode(',', $list);
             foreach ($items as $item) {
                 $paths = array_merge($paths, $this->getPaths($item));
