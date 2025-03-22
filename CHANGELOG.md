@@ -1,8 +1,9 @@
 # CHANGELOG
 List of changes since the very first version :)
 
-## 0.9.1 - 2025-03-XX
+## 0.9.1 - 2025-03-22
 - Support nikic/php-parser:5.4
+- Update to PHPUnit 11
 
 ## 0.9.0 - 2025-03-20
 - Support nikic/php-parser:5.0
