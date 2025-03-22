@@ -5,10 +5,15 @@ namespace tests\PhpAssumptions;
 use League\CLImate\Argument\Manager;
 use League\CLImate\CLImate;
 use PhpAssumptions\Cli;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
-class CliTest extends \PHPUnit_Framework_TestCase
+class CliTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var Cli
      */
@@ -24,7 +29,7 @@ class CliTest extends \PHPUnit_Framework_TestCase
      */
     private $argumentManager;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->argumentManager = $this->prophesize(Manager::class);
         $this->argumentManager->add(Argument::type('array'))->shouldBeCalled();
@@ -37,9 +42,7 @@ class CliTest extends \PHPUnit_Framework_TestCase
         $this->cli = new Cli($this->climate->reveal());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldAnalyseTargetFile()
     {
         $this->itShouldShowAuthor();
@@ -63,9 +66,7 @@ class CliTest extends \PHPUnit_Framework_TestCase
         $this->cli->handle(['phpa', $path]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldAnalyseTargetDirectory()
     {
         $this->itShouldShowAuthor();
@@ -92,9 +93,7 @@ class CliTest extends \PHPUnit_Framework_TestCase
         $this->cli->handle(['phpa', FIXTURES_DIR]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldIgnoreExcludeFile()
     {
         $this->itShouldShowAuthor();
@@ -112,9 +111,7 @@ class CliTest extends \PHPUnit_Framework_TestCase
         $this->cli->handle(['phpa', $path]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldIgnoreExcludeFileFromDirectory()
     {
         $this->itShouldShowAuthor();
@@ -140,9 +137,7 @@ class CliTest extends \PHPUnit_Framework_TestCase
         $this->cli->handle(['phpa', FIXTURES_DIR]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldIgnoreExcludeDirectory()
     {
         $this->itShouldShowAuthor();
@@ -160,9 +155,7 @@ class CliTest extends \PHPUnit_Framework_TestCase
         $this->cli->handle(['phpa', FIXTURES_DIR]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldAnalyseTargetFileAndOutputXml()
     {
         $this->itShouldShowAuthor();
@@ -182,9 +175,7 @@ class CliTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(is_file($output));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldShowUsageWithNoArgs()
     {
         $this->argumentManager->parse(Argument::type('array'))->willThrow(\Exception::class);
@@ -194,9 +185,7 @@ class CliTest extends \PHPUnit_Framework_TestCase
         $this->cli->handle($args);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldShowVersion()
     {
         $this->argumentManager->defined('version')->shouldBeCalled()->willReturn(true);

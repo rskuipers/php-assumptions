@@ -3,10 +3,16 @@
 namespace tests\PhpAssumptions;
 
 use PhpAssumptions\Detector;
+use PhpParser\Parser;
 use PhpParser\ParserFactory;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
-class NodeVisitorTest extends \PHPUnit_Framework_TestCase
+class DetectorTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var Parser
      */
@@ -17,15 +23,13 @@ class NodeVisitorTest extends \PHPUnit_Framework_TestCase
      */
     private $detector;
 
-    public function setUp()
+    public function setUp(): void
     {
-        $this->parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
+        $this->parser = (new ParserFactory)->createForNewestSupportedVersion();
         $this->detector = new Detector();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldDetectNotNull()
     {
         $node = $this->parser->parse('<?php $var !== null;')[0];
@@ -35,9 +39,7 @@ class NodeVisitorTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->detector->scan($node));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldDetectEqualsNotFalse()
     {
         $node = $this->parser->parse('<?php $test !== false;')[0];
@@ -56,9 +58,7 @@ class NodeVisitorTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->detector->scan($node));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldDetectEqualsTrue()
     {
         $node = $this->parser->parse('<?php $test !== true;')[0];
@@ -80,9 +80,7 @@ class NodeVisitorTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->detector->scan($node));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldDetectEqualsScalar()
     {
         $node = $this->parser->parse('<?php $test == "test";')[0];
@@ -92,18 +90,14 @@ class NodeVisitorTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->detector->scan($node));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldDetectWhileAssumptions()
     {
         $node = $this->parser->parse('<?php while ($test);')[0];
         $this->assertTrue($this->detector->scan($node));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldDetectForAssumptions()
     {
         $node = $this->parser->parse('<?php for ($i = 0; $i; $i++);')[0];

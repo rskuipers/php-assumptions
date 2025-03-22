@@ -5,13 +5,18 @@ namespace tests\PhpAssumptions;
 use PhpAssumptions\Analyser;
 use PhpAssumptions\Output\OutputInterface;
 use PhpParser\Parser;
-use PhpParser\Parser\Multiple;
+use PhpParser\ParserAbstract;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
-class AnalyserTest extends \PHPUnit_Framework_TestCase
+class AnalyserTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var Parser
      */
@@ -37,10 +42,10 @@ class AnalyserTest extends \PHPUnit_Framework_TestCase
      */
     private $node;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->node = $this->prophesize(Node::class);
-        $this->parser = $this->prophesize(Multiple::class);
+        $this->parser = $this->prophesize(ParserAbstract::class);
         $this->output = $this->prophesize(OutputInterface::class);
         $this->nodeTraverser = $this->prophesize(NodeTraverser::class);
         $this->analyser = new Analyser(
@@ -50,9 +55,7 @@ class AnalyserTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldAnalyseAllFiles()
     {
         $files = [fixture('MyClass.php')];
@@ -65,9 +68,7 @@ class AnalyserTest extends \PHPUnit_Framework_TestCase
         $this->analyser->analyse($files);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldIgnoreExcludeFiles()
     {
         $files = [fixture('MyClass.php'), fixture('MyOtherClass.php')];

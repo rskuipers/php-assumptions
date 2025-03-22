@@ -5,13 +5,12 @@ namespace PhpAssumptions;
 use PhpAssumptions\Output\Result;
 use PhpParser\Node;
 use PhpParser\NodeTraverserInterface;
-use PhpParser\Parser\Multiple;
-use PhpParser\ParserAbstract;
+use PhpParser\Parser;
 
 class Analyser
 {
     /**
-     * @var ParserAbstract
+     * @var Parser
      */
     private $parser;
 
@@ -41,12 +40,12 @@ class Analyser
     private $excludes = [];
 
     /**
-     * @param ParserAbstract|Multiple $parser
+     * @param Parser $parser
      * @param NodeTraverserInterface  $nodeTraverser
      * @param string[]                $excludes
      */
     public function __construct(
-        Multiple $parser,
+        Parser $parser,
         NodeTraverserInterface $nodeTraverser,
         $excludes = []
     ) {

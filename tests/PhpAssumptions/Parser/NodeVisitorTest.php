@@ -6,11 +6,15 @@ use PhpAssumptions\Analyser;
 use PhpAssumptions\Detector;
 use PhpAssumptions\Parser\NodeVisitor;
 use PhpParser\Node;
-use PhpParser\PrettyPrinter\Standard;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
-class NodeVisitorTest extends \PHPUnit_Framework_TestCase
+class NodeVisitorTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var NodeVisitor
      */
@@ -31,7 +35,7 @@ class NodeVisitorTest extends \PHPUnit_Framework_TestCase
      */
     private $node;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->analyser = $this->prophesize(Analyser::class);
         $this->detector = $this->prophesize(Detector::class);
@@ -42,9 +46,7 @@ class NodeVisitorTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldCallScanAndWriteOnSuccess()
     {
         $this->node->getLine()->shouldBeCalled()->willReturn(120);
@@ -58,9 +60,7 @@ class NodeVisitorTest extends \PHPUnit_Framework_TestCase
         $this->nodeVisitor->enterNode($this->node->reveal());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldCallScanAndNotWriteOnFailure()
     {
         $this->detector->scan($this->node)->shouldBeCalled()->willReturn(false);

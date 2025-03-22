@@ -7,24 +7,27 @@ use PhpAssumptions\Detector;
 use PhpAssumptions\Parser\NodeVisitor;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
-class ExampleTest extends \PHPUnit_Framework_TestCase
+class ExampleTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var Analyser
      */
     private $analyser;
 
-    public function setUp()
+    public function setUp(): void
     {
         $nodeTraverser = new NodeTraverser();
-        $this->analyser = new Analyser((new ParserFactory)->create(ParserFactory::PREFER_PHP7), $nodeTraverser);
+        $this->analyser = new Analyser((new ParserFactory)->createForNewestSupportedVersion(), $nodeTraverser);
         $nodeTraverser->addVisitor(new NodeVisitor($this->analyser, new Detector()));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldProperlyDetectAssumptions()
     {
         $file = fixture('Example.php');
@@ -60,9 +63,7 @@ class ExampleTest extends \PHPUnit_Framework_TestCase
         ], $result->getAssumptions());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldProperlyDetectBoolExpressions()
     {
         $file = fixture('Example.php');

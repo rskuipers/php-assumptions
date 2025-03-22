@@ -5,10 +5,14 @@ namespace tests\PhpAssumptions\Output;
 use League\CLImate\CLImate;
 use PhpAssumptions\Output\PrettyOutput;
 use PhpAssumptions\Output\Result;
-use Prophecy\Argument;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
-class PrettyOutputTest extends \PHPUnit_Framework_TestCase
+class PrettyOutputTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var PrettyOutput
      */
@@ -24,16 +28,14 @@ class PrettyOutputTest extends \PHPUnit_Framework_TestCase
      */
     private $result;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->climate = $this->prophesize(CLImate::class);
         $this->result = $this->prophesize(Result::class);
         $this->output = new PrettyOutput($this->climate->reveal());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldOutputWhatIsWritten()
     {
         $assumptions = [
