@@ -25,7 +25,7 @@ class Cli
 
     private function createParser()
     {
-        $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
+        $parser = (new ParserFactory)->createForNewestSupportedVersion();
         return $parser;
     }
 

@@ -6,9 +6,14 @@ use League\CLImate\CLImate;
 use PhpAssumptions\Cli;
 use PhpAssumptions\Output\Result;
 use PhpAssumptions\Output\XmlOutput;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
-class XmlOutputTest extends \PHPUnit_Framework_TestCase
+class XmlOutputTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var XmlOutput
      */
@@ -29,7 +34,7 @@ class XmlOutputTest extends \PHPUnit_Framework_TestCase
      */
     private $file;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->file = tempnam(sys_get_temp_dir(), 'xml');
         $this->cli = $this->prophesize(CLImate::class);
@@ -37,9 +42,7 @@ class XmlOutputTest extends \PHPUnit_Framework_TestCase
         $this->xmlOutput = new XmlOutput($this->cli->reveal(), $this->file);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldGenerateValidXml()
     {
         $this->result->getAssumptions()->shouldBeCalled()->willReturn([
