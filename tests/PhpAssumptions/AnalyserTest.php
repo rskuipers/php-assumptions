@@ -5,7 +5,7 @@ namespace tests\PhpAssumptions;
 use PhpAssumptions\Analyser;
 use PhpAssumptions\Output\OutputInterface;
 use PhpParser\Parser;
-use PhpParser\Parser\Multiple;
+use PhpParser\ParserAbstract;
 use PhpParser\Node;
 use PhpParser\NodeTraverser;
 use Prophecy\Argument;
@@ -40,7 +40,7 @@ class AnalyserTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->node = $this->prophesize(Node::class);
-        $this->parser = $this->prophesize(Multiple::class);
+        $this->parser = $this->prophesize(ParserAbstract::class);
         $this->output = $this->prophesize(OutputInterface::class);
         $this->nodeTraverser = $this->prophesize(NodeTraverser::class);
         $this->analyser = new Analyser(

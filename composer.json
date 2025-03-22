@@ -9,7 +9,7 @@
         }
     ],
     "require": {
-        "nikic/php-parser": "^2.0|^3.0|^4.0|^5.0",
+        "nikic/php-parser": "^4.0|^5.0",
         "league/climate": "^3.1"
     },
     "require-dev": {

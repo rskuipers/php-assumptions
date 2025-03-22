@@ -19,7 +19,7 @@ class NodeVisitorTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
+        $this->parser = (new ParserFactory)->createForNewestSupportedVersion();
         $this->detector = new Detector();
     }
 

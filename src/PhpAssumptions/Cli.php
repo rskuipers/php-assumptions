@@ -11,7 +11,7 @@ use PhpParser\ParserFactory;
 
 class Cli
 {
-    const VERSION = '0.8.0';
+    const VERSION = '0.9.1';
 
     /**
      * @var CLImate
